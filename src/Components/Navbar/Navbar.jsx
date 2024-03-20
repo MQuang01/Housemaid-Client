@@ -7,7 +7,7 @@ const Navbar = () => {
             <div className="container">
                 <div className="d-flex justify-content-between topbar py-2">
                     <div className="d-flex align-items-center flex-shrink-0 topbar-info">
-                        <a href="#" className="me-4 text-secondary"><i className="fas fa-map-marker-alt me-2 text-dark"></i>123 Street, CA, USA</a>
+                        <a href="#" className="me-4 text-secondary"><i className="fas fa-map-marker-alt me-2 text-dark"></i>27 nguyen Tri Phuong</a>
                         <a href="#" className="me-4 text-secondary"><i className="fas fa-phone-alt me-2 text-dark"></i>+01234567890</a>
                         <a href="#" className="text-secondary"><i className="fas fa-envelope me-2 text-dark"></i>Example@gmail.com</a>
                     </div>
