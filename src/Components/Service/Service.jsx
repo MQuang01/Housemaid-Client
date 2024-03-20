@@ -21,9 +21,9 @@ const Service = () => {
         <div className="container-fluid services py-5">
             <div className="container text-center py-5">
                 <div className="text-center mb-5 wow fadeInUp" data-wow-delay=".3s">
-                    <h5 className="mb-2 px-3 py-1 text-dark rounded-pill d-inline-block border border-2 border-primary">Our Featured Services</h5>
+                    <h5 className="mb-2 px-3 py-1 text-dark rounded-pill d-inline-block border border-2 border-primary">Dịch vụ nổi bật </h5>
                     {/*<h1 className="display-5">Our  Services</h1>*/}
-                    <h2>Hire professionals, Experienced specifically for your needs</h2>
+                    <h2>Với trình độ nghiệp vụ được đào tạo bài bản, nhân viên tại đây luôn làm việc với tinh thần trách nhiệm cao nhất.</h2>
                 </div>
 
                 <div className="row g-5" style={{'--bs-gutter-x': '0.1rem' }}>
@@ -88,7 +88,7 @@ const Service = () => {
                     </div>
                 </div>
 
-                <button type="button" className="btn btn-primary border-0 rounded-pill px-4 py-3 mt-4 wow fadeInUp" data-wow-delay=".3s">More Services</button>
+                {/*<button type="button" className="btn btn-primary border-0 rounded-pill px-4 py-3 mt-4 wow fadeInUp" data-wow-delay=".3s">More Services</button>*/}
             </div>
         </div>
     )
