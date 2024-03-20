@@ -545,7 +545,17 @@
 }
 
 /*** Blog End ***/
-
+.service-tag:hover{
+    box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+    padding: 10px;
+    transition: .5s;
+    /*border-color: rgba(0, 0, 0, .5);*/
+    border-color: rgba(255, 255, 255, .5);
+    border-radius:20px;
+}
+.service-tag{
+    height: 320px;
+}
 
 /*** Pricing Start ***/
 .pricing-item {
