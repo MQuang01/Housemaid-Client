@@ -560,17 +560,14 @@
 /*** Pricing Start ***/
 .pricing-item {
     transition: .5s;
-    
 }
 
 .pricing-item:hover {
-    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
-    margin: -20px 0 20px 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+
 }
 
 .pricing-label {
-    border-bottom: 20px solid var(--bs-light);
-    border-radius: 0 0 300px 300px;
     transition: .5s;
 }
 
@@ -584,6 +581,7 @@
 
 
 /*** Pricing End ***/
+
 
 
 /*** Call To Action start ***/
