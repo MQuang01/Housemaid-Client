@@ -37,7 +37,7 @@ const Navbar = () => {
         <div className="container-fluid bg-dark">
             <div className="container">
                 <nav className="navbar navbar-dark navbar-expand-lg py-lg-0">
-                    <a href="index.html" className="navbar-brand">
+                    <a href="/" className="navbar-brand">
                         <h1 className="text-primary mb-0 display-5">House<span className="text-white">Maid</span><i className="fa fa-broom text-primary ms-2"></i></h1>
                     </a>
                     <button className="navbar-toggler bg-primary" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -45,14 +45,14 @@ const Navbar = () => {
                     </button>
                     <div className="collapse navbar-collapse me-n3" id="navbarCollapse">
                         <div className="navbar-nav ms-auto">
-                            <a href="index.html" className="nav-item nav-link active">Trang chủ</a>
+                            <a href="/" className="nav-item nav-link active">Trang chủ</a>
                             <a href="about.html" className="nav-item nav-link">Thông tin</a>
-                            <a href="service.html" className="nav-item nav-link">Dịch vụ</a>
+                            <a href="#service-list" className="nav-item nav-link">Dịch vụ</a>
                             {/*<a href="project.html" className="nav-item nav-link">Dự án</a>*/}
                             <div className="nav-item dropdown">
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Mục lục</a>
                                 <div className="dropdown-menu m-0 bg-primary">
-                                    <a href="price.html" className="dropdown-item">Bảng giá</a>
+                                    <a href="#table-price" className="dropdown-item">Bảng giá</a>
                                     {/*<a href="blog.html" className="dropdown-item">Blog Post</a>*/}
                                     {/*<a href="team.html" className="dropdown-item">Team Members</a>*/}
                                     <a href="testimonial.html" className="dropdown-item">Testimonial</a>

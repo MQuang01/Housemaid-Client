@@ -10,7 +10,7 @@ const TablePrice = () => {
 
 
     return (
-        <div className="container-fluid py-5">
+        <div className="container-fluid py-5" id="table-price">
             <div className="container py-5">
                 <div className="text-center mb-5 wow fadeInUp" data-wow-delay=".3s">
                     <h5 className="mb-2 px-3 py-1 text-dark rounded-pill d-inline-block border border-2 border-primary">Tham khảo giá</h5>
