@@ -1,9 +1,9 @@
 import React from 'react'
-import img2 from "../../img/carousel-2.jpg";
-import img1 from "../../img/carousel-1.jpg";
-import img3 from "../../img/carousel-3.jpg";
-import img4 from "../../img/carousel-4.jpg";
-import img5 from "../../img/carousel-5.jpg";
+// import img2 from "../../../public/assets/img/carousel-2.jpg";
+// import img1 from "../../../public/assets/img/carousel-1.jpg";
+// import img3 from "../../../public/assets/img/carousel-3.jpg";
+// import img4 from "../../../public/assets/img/carousel-4.jpg";
+// import img5 from "../../../public/assets/img/carousel-5.jpg";
 
 const Slide = () => {
   return (
@@ -19,11 +19,11 @@ const Slide = () => {
               </ol>
               <div className="carousel-inner" role="listbox">
                   <div className="carousel-item active">
-                      <img src={img1} className="img-fluid w-100" alt="First slide" />
+                      <img src={"/assets/img/carousel-1.jpg"} className="img-fluid w-100" alt="First slide" />
 
                   </div>
                   <div className="carousel-item">
-                      <img src={img2} className="img-fluid w-100" alt="Second slide"/>
+                      <img src={"/assets/img/carousel-2.jpg"} className="img-fluid w-100" alt="Second slide"/>
                           {/*<div className="carousel-caption">*/}
                           {/*    <div className="container carousel-content">*/}
                           {/*        <h4 className="text-white mb-4 animated slideInDown">No 1 Pest Control Services</h4>*/}
@@ -33,13 +33,13 @@ const Slide = () => {
                           {/*</div>*/}
                   </div>
                   <div className="carousel-item">
-                      <img src={img3} className="img-fluid w-100" alt="Third slide"/>
+                      <img src={"/assets/img/carousel-3.jpg"} className="img-fluid w-100" alt="Third slide"/>
                   </div>
                   <div className="carousel-item">
-                      <img src={img4} className="img-fluid w-100" alt="Fourth slide"/>
+                      <img src={"/assets/img/carousel-4.jpg"} className="img-fluid w-100" alt="Fourth slide"/>
                   </div>
                   <div className="carousel-item">
-                      <img src={img5} className="img-fluid w-100" alt="Fifth slide"/>
+                      <img src={"/assets/img/carousel-5.jpg"} className="img-fluid w-100" alt="Fifth slide"/>
                   </div>
 
               </div>

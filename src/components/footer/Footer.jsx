@@ -15,9 +15,9 @@ const Footer =() => {
                     </div>
                     <div className="col-lg-3 col-md-6">
                         <div className="footer-item">
-                            <h4 className="text-white fw-bold mb-4">Usefull Link</h4>
+                            <h4 className="text-white fw-bold mb-4">Về chúng tôi</h4>
                             <div className="d-flex flex-column align-items-start">
-                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Về chúng tôi</a>
+                                {/*<a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Về chúng tôi</a>*/}
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Liên hệ chúng tôi</a>
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Dịch vụ</a>
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Điều khoản & Điều kiện</a>
@@ -26,12 +26,12 @@ const Footer =() => {
                     </div>
                     <div className="col-lg-3 col-md-6">
                         <div className="footer-item">
-                            <h4 className="text-white fw-bold mb-4">Services Link</h4>
+                            <h4 className="text-white fw-bold mb-4">Dịch vụ</h4>
                             <div className="d-flex flex-column align-items-start">
-                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Apartment Cleaning</a>
-                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Office Cleaning</a>
-                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Car Washing</a>
-                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Green Cleaning</a>
+                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Dọn căn hộ</a>
+                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Dọn văn phòng</a>
+                                <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Rửa xe</a>
+                                {/*<a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Green Cleaning</a>*/}
                             </div>
                             
                         </div>

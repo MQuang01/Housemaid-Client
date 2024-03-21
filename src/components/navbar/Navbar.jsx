@@ -16,7 +16,7 @@ const Navbar = () => {
                             <form method="post" action="index.html">
                                 <div className="form-group">
                                     <div className="d-flex">
-                                        <input type="search" className="form-control border-0 rounded-pill" name="search-input" value="" placeholder="Search Here" required="" />
+                                        <input type="search" className="form-control border-0 rounded-pill" name="search-input" value="" placeholder="Tìm kiếm" required="" />
                                         <button type="submit" value="Search Now!" className="btn"><i className="fa fa-search text-dark"></i></button>
                                     </div>
                                 </div>

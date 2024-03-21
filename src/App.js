@@ -1,12 +1,8 @@
-import Navbar from "./Components/Navbar/Navbar";
-import Footer from "./Components/Footer/Footer";
-import Slide from "./Components/Slide/Slide";
-import Service from "./Components/Service/Service";
-import TablePrice from "./Components/TablePrice/TablePrice";
-import Home from "./Components/Home";
+
+import Home from "./components/Home";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Suspense} from "react";
-import Booking from "./Components/Booking/Booking";
+import Booking from "./components/booking/Booking";
 function App() {
     return(
         <>

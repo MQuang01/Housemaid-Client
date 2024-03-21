@@ -1,8 +1,4 @@
-import domestichelp from "../../img/domestichelp.jpg";
-import cook from "../../img/cook.jpg";
-import babysitter from "../../img/babysitter.jpg"
-import allrounder from "../../img/allrounder.png"
-import livein from "../../img/livein.jpeg"
+
 import {Link} from "react-router-dom";
 import RatingStars from "./RatingStars";
 const Service = () => {
@@ -34,11 +30,11 @@ const Service = () => {
                         <div className="bg-light rounded p-5 services-item">
                             <div className="d-flex" style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
                                 <div className="mb-4">
-                                    <img src={domestichelp} style={imgService} alt="domestichelp"/>
+                                    <img src={"/assets/img/domestichelp.jpg"} style={imgService} alt="domestichelp"/>
                                 </div>
                             </div>
                             {/*<img src={domestichelp} style={imgService} alt="domestichelp"/>*/}
-                            <h4 style={h4size}>Domestic Help</h4>
+                            <h4 style={h4size}>Giúp việc nhà</h4>
 
                             <RatingStars rating={3.4}/>
                         </div>
@@ -48,10 +44,10 @@ const Service = () => {
                         <div className="bg-light rounded p-5 services-item">
                             <div className="d-flex" style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
                                 <div className="mb-4">
-                                    <img src={cook} style={imgService} alt="domestichelp"/>
+                                    <img src={"assets/img/cook.jpg"} style={imgService} alt="domestichelp"/>
                                 </div>
                             </div>
-                            <h4 className="text-center" style={h4size}>Cooks</h4>
+                            <h4 className="text-center" style={h4size}>Nấu ăn</h4>
                             <RatingStars rating={3.4}/>
 
                         </div>
@@ -60,10 +56,10 @@ const Service = () => {
                         <div className="bg-light rounded p-5 services-item">
                             <div className="d-flex" style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
                                 <div className="mb-4">
-                                    <img src={babysitter} style={imgService} alt="domestichelp"/>
+                                    <img src={"/assets/img/babysitter.jpg"} style={imgService} alt="domestichelp"/>
                                 </div>
                             </div>
-                            <h4 className="text-center" style={h4size}>Babysitter</h4>
+                            <h4 className="text-center" style={h4size}>Trông trẻ</h4>
                             <RatingStars rating={3.4}/>
 
                         </div>
@@ -72,10 +68,10 @@ const Service = () => {
                         <div className="bg-light rounded p-5 services-item">
                             <div className="d-flex" style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
                                 <div className="mb-4">
-                                    <img src={allrounder} style={imgService} alt="domestichelp"/>
+                                    <img src={"/assets/img/allrounder.png"} style={imgService} alt="domestichelp"/>
                                 </div>
                             </div>
-                            <h4 className="text-center" style={h4size}>All-rounders</h4>
+                            <h4 className="text-center" style={h4size}>Giúp việc đa năng</h4>
                             <RatingStars rating={3.4}/>
 
                         </div>
@@ -84,10 +80,10 @@ const Service = () => {
                         <div className="bg-light rounded p-5 services-item">
                             <div className="d-flex" style={{ alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
                                 <div className="mb-4">
-                                    <img src={livein} style={imgService} alt="domestichelp"/>
+                                    <img src={"/assets/img/livein.jpeg"} style={imgService} alt="domestichelp"/>
                                 </div>
                             </div>
-                            <h4 className="text-center" style={h4size}>24 Hrs - Live In</h4>
+                            <h4 className="text-center" style={h4size}>Giúp việc 24/7</h4>
                             <RatingStars rating={3.4}/>
 
                         </div>
