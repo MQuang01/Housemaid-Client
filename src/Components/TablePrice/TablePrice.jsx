@@ -1,13 +1,20 @@
 import React, {useState,useEffect} from "react";
+import axios from "axios";
 const TablePrice = () => {
     const [serviceData, setServiceData] = useState([]);
-    useEffect(() => {
-        // Gọi API để lấy dữ liệu và cập nhật state
-        fetch("API_URL")
-            .then((response) => response.json())
-            .then((data) => setServiceData(data));
-    }, [])
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://192.168.1.39:8080/api/jobs');
+                setServiceData(response.data);
+            } catch (error) {
+                console.error('Error fetching data: ', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     return (
         <div className="container-fluid py-5" id="table-price">
@@ -26,16 +33,20 @@ const TablePrice = () => {
                                 <thead>
                                 <tr>
                                     <th>STT</th>
+                                    <th>Image</th>
                                     <th>Tên dịch vụ</th>
                                     <th>Giá tiền</th>
+                                    <th>Thời gian ước tính</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {serviceData.map((service, index) => (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
+                                        <td><img src={service.image} alt="domestichelp"/></td>
                                         <td>{service.name}</td>
                                         <td>{service.price}</td>
+                                        <td>~{service.timeApprox} phút/đơn vị</td>
                                     </tr>
                                 ))}
                                 </tbody>
