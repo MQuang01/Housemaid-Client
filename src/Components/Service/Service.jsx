@@ -45,14 +45,14 @@ const Service = () => {
                 <div className="row g-5" style={{'--bs-gutter-x': '0.1rem'}}>
                     {categories.map((category, index) => {
                         return (
-                            <div className="col-xxl-2 col-lg-4 col-md-6 col-sm-12 mx-auto wow fadeInUp service-tag"
+                            <div key={index} className="col-xxl-2 col-lg-4 col-md-6 col-sm-12 mx-auto wow fadeInUp service-tag"
                                  data-wow-delay=".3s">
                                 <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>
                                     <div className="bg-light rounded p-5 services-item">
                                         <div className="d-flex"
                                              style={{alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
                                             <div className="mb-4">
-                                                <img src={category.urlImage} style={imgService} alt="domestichelp"/>
+                                                <img src={category.fileInfo.url} style={imgService} alt="domestichelp"/>
                                             </div>
                                         </div>
                                         <h4 style={h4size}>{category.name}</h4>

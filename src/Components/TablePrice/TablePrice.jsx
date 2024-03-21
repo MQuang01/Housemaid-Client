@@ -43,9 +43,9 @@ const TablePrice = () => {
                                 {serviceData.map((service, index) => (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
-                                        <td><img src={service.image} alt="domestichelp"/></td>
+                                        <td><img src={service.fileInfo.url} height='40px' width='40px' alt="domestichelp"/></td>
                                         <td>{service.name}</td>
-                                        <td>{service.price}</td>
+                                        <td>{service.price} .VNĐ</td>
                                         <td>~{service.timeApprox} phút/đơn vị</td>
                                     </tr>
                                 ))}
