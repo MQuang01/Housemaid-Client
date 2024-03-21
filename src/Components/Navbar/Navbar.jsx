@@ -53,10 +53,7 @@ const Navbar = () => {
                                 <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Mục lục</a>
                                 <div className="dropdown-menu m-0 bg-primary">
                                     <a href="#table-price" className="dropdown-item">Bảng giá</a>
-                                    {/*<a href="blog.html" className="dropdown-item">Blog Post</a>*/}
-                                    {/*<a href="team.html" className="dropdown-item">Team Members</a>*/}
                                     <a href="testimonial.html" className="dropdown-item">Testimonial</a>
-                                    {/*<a href="404.html" className="dropdown-item">404 Page</a>*/}
                                 </div>
                             </div>
                             <a href="contact.html" className="nav-item nav-link">Liên hệ</a>
