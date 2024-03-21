@@ -378,12 +378,15 @@
     transition: .5s;
 }
 
-.services-item:hover i {
-    color: var(--bs-dark) !important;
-    z-index: 1;
-    rotate: 360deg;
-}
+/*.services-item:hover i {*/
+/*    color: var(--bs-dark) !important;*/
+/*    z-index: 1;*/
+/*    rotate: 360deg;*/
+/*}*/
+.star-rating{
+    /*margin-top: 10px;*/
 
+}
 .services-btn {
     display: flex;
     align-items: center;
@@ -546,12 +549,14 @@
 
 /*** Blog End ***/
 .service-tag:hover{
-    box-shadow: 0 0 20px rgba(0, 0, 0, .5);
-    padding: 10px;
-    transition: .5s;
-    /*border-color: rgba(0, 0, 0, .5);*/
-    border-color: rgba(255, 255, 255, .5);
-    border-radius:20px;
+    /*box-shadow: 0 0 20px rgba(0, 0, 0, .5);*/
+    /*padding: 10px;*/
+    /*transition: .5s;*/
+    /*border-color: rgba(255, 255, 255, .5);*/
+    /*border-radius:20px;*/
+    transform: scale(1.06);
+    transition: all 200ms;
+    cursor: pointer;
 }
 .service-tag{
     height: 320px;
@@ -776,3 +781,6 @@
 }
 
 /*** Copywright End ***/
+html {
+    scroll-behavior: smooth;
+}
