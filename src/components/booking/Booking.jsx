@@ -1,6 +1,5 @@
-import Navbar from "../Navbar/Navbar";
-import Footer from "../Footer/Footer";
-import RatingStars from "../Service/RatingStars";
+import Navbar from "../navbar/Navbar";
+import Footer from "../footer/Footer";
 
 const Booking = () => {
 

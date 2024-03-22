@@ -1,8 +1,8 @@
-import Navbar from "./Navbar/Navbar";
-import Slide from "./Slide/Slide";
-import Service from "./Service/Service";
-import TablePrice from "./TablePrice/TablePrice";
-import Footer from "./Footer/Footer";
+import Navbar from "./navbar/Navbar";
+import Slide from "./slide/Slide";
+import Service from "./service/Service";
+import TablePrice from "./tablePrice/TablePrice";
+import Footer from "./footer/Footer";
 
 function Home() {
     return (
