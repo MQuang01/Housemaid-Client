@@ -567,11 +567,13 @@
     transition: .5s;
 }
 
-.pricing-item:hover {
+/*.pricing-item:hover {*/
+/*    box-shadow: 0 0 10px rgba(0, 0, 0, .5);*/
+
+/*}*/
+.table-hover tbody tr:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, .5);
-
 }
-
 .pricing-label {
     transition: .5s;
 }
