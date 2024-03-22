@@ -14,7 +14,6 @@ function App() {
                             <Route path='/login' element={<LoginSignUp />} />
                             <Route path='/' element={<Home/>} />
                             <Route path='/booking' element={<Booking />} />
-
                         </Routes>
                     </Suspense>
                 {/*</AuthProvider>*/}
