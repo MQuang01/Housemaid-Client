@@ -1,4 +1,5 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import axios from "axios";
 // import img2 from "../../../public/assets/img/carousel-2.jpg";
 // import img1 from "../../../public/assets/img/carousel-1.jpg";
 // import img3 from "../../../public/assets/img/carousel-3.jpg";
@@ -51,6 +52,14 @@ const Slide = () => {
                   <span className="carousel-control-next-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
               </button>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+              <a href="/booking">
+                  <button type="button" className="btn btn-primary border-0 rounded-pill px-4 py-3 mt-4 wow fadeInUp" data-wow-delay=".3s">
+                      Đặt dịch vụ
+                  </button>
+              </a>
           </div>
       </div>
 

@@ -1,7 +1,7 @@
 import Navbar from "./navbar/Navbar";
 import Slide from "./slide/Slide";
 import Service from "./service/Service";
-import TablePrice from "./tablePrice/TablePrice";
+import TablePrice from "./tableprice/TablePrice";
 import Footer from "./footer/Footer";
 
 function Home() {
