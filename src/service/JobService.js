@@ -1,5 +1,5 @@
 import axios from "axios";
-import {InforUrl} from "../components/until/InforUrl";
+import {InforUrl} from "../until/InforUrl";
 
 
 export const fetchJobsPaging = async (page) => {
