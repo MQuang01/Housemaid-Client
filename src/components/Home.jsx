@@ -1,6 +1,6 @@
 import Navbar from "./navbar/Navbar";
 import Slide from "./slide/Slide";
-import Service from "./service/Service";
+import Category from "./category/Category";
 import TablePrice from "./tableprice/TablePrice";
 import Footer from "./footer/Footer";
 
@@ -10,7 +10,7 @@ function Home() {
 
             <Navbar/>
             <Slide/>
-            <Service/>
+            <Category/>
             <TablePrice/>
             <Footer/>
 
