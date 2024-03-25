@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {InforUrl} from "../until/InforUrl";
+import {InforUrl} from "../../until/InforUrl";
 import axios from "axios";
 import {fetchJobsPaging} from "../../service/JobService";
 import Pagination from "../pagination/Pagination";

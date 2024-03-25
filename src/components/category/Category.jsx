@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import RatingStars from "./RatingStars";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {InforUrl} from "../until/InforUrl";
+import {InforUrl} from "../../until/InforUrl";
 import {fetchCategory} from "../../service/CategoryService";
 
 const Category = () => {

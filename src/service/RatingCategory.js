@@ -1,4 +1,4 @@
-import {InforUrl} from "../components/until/InforUrl";
+import {InforUrl} from "../until/InforUrl";
 import axios from "axios";
 
 export const fetchRatingCategory = async () => {
