@@ -1,26 +1,42 @@
-import React, {useState,useEffect} from "react";
+import React, {useState, useEffect} from "react";
+import {InforUrl} from "../until/InforUrl";
 import axios from "axios";
+import {fetchJobsPaging} from "../../service/JobService";
+import Pagination from "../pagination/Pagination";
+
 const TablePrice = () => {
-    const [serviceData, setServiceData] = useState([]);
+    const [loading,setLoading] = useState(false);
+    const [job, setJob] = useState([]);
+    const [dataPage, setDataPage] = useState(
+        {
+            page: 0,
+            totalPage: 0
+        }
+    );
+
+    function fetchDataPage(newDataPage) {
+        setDataPage(newDataPage);
+    }
+
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://192.168.1.39:8080/api/jobs');
-                setServiceData(response.data);
-            } catch (error) {
-                console.error('Error fetching data: ', error);
-            }
-        };
-
-        fetchData();
-    }, []);
+        fetchJobsPaging(dataPage.page).then((data) => {
+            setJob(data.content);
+            setDataPage(
+                {
+                    ...dataPage,
+                    totalPage: data.totalPages
+                }
+            );
+        })
+    }, [dataPage.page]);
 
     return (
         <div className="container-fluid py-5" id="table-price">
             <div className="container py-5">
                 <div className="text-center mb-5 wow fadeInUp" data-wow-delay=".3s">
-                    <h5 className="mb-2 px-3 py-1 text-dark rounded-pill d-inline-block border border-2 border-primary">Tham khảo giá</h5>
+                    <h5 className="mb-2 px-3 py-1 text-dark rounded-pill d-inline-block border border-2 border-primary">Tham
+                        khảo giá</h5>
                     {/*<h1 className="display-5 w-50 mx-auto">Bảng giá dịch vụ vệ sinh</h1>*/}
                 </div>
                 <div className="row g-5">
@@ -40,17 +56,19 @@ const TablePrice = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {serviceData.map((service, index) => (
+                                {job.map((job, index) => (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
-                                        <td><img src={service.fileInfo.url} height='40px' width='40px' alt="domestichelp"/></td>
-                                        <td>{service.name}</td>
-                                        <td>{service.price} .VNĐ</td>
-                                        <td>~{service.timeApprox} phút/đơn vị</td>
+                                        <td><img src={job.urlImage} height='40px' width='40px' alt="domestichelp"/></td>
+                                        <td>{job.name}</td>
+                                        <td>{job.price} .VNĐ</td>
+                                        <td>~{job.timeApprox} phút/đơn vị</td>
                                     </tr>
                                 ))}
                                 </tbody>
                             </table>
+                            <Pagination dataPage={dataPage} setDataPage={fetchDataPage} loading={loading} setLoading={setLoading}/>
+
                         </div>
                     </div>
                 </div>
