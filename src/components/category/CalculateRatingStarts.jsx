@@ -1,6 +1,6 @@
 
 
-const RatingStars = ({ rating }) => {
+const CalculateRatingStarts = ({ rating }) => {
     const fullStars = Math.floor(rating); // Số sao nguyên
     const hasHalfStar = rating % 1 !== 0; // Kiểm tra xem có nửa sao không
     const remainingStars = Math.max(0, 5 - Math.ceil(rating)); // Số sao còn lại
@@ -23,4 +23,4 @@ const RatingStars = ({ rating }) => {
 
 
 
-export default RatingStars;
+export default CalculateRatingStarts;

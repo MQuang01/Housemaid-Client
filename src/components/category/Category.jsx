@@ -1,6 +1,5 @@
-
-import {Link} from "react-router-dom";
-import RatingStars from "./RatingStars";
+import {Link, useNavigate} from "react-router-dom";
+import CalculateRatingStarts from "./CalculateRatingStarts";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {InforUrl} from "../../until/InforUrl";
@@ -17,12 +16,17 @@ const Category = () => {
     const h4size = {
         height: '60px'
     }
+
+    const nav = useNavigate();
     const [categories, setCategory] = useState([]);
     useEffect(() => {
         fetchCategory().then((data) => setCategory(data));
     }, []);
 
-
+    function handleCategoryClick(idCate) {
+        nav("/booking", {state: {idCate}});
+        window.scrollTo(0, 0);
+    }
 
     return (
         <div className="container-fluid services" id="service-list">
@@ -34,13 +38,15 @@ const Category = () => {
                         nhiệm cao nhất.</h2>
                 </div>
 
-                <div className="row g-5" style={{'--bs-gutter-x': '0.1rem'}}>
+                <div className="d-flex gap-4 row g-5" style={{'--bs-gutter-x': '0.1rem'}}>
                     {categories.map((category, index) => {
+
                         return (
-                            <div key={index} className="col-xxl-2 col-lg-4 col-md-6 col-sm-12 mx-auto wow fadeInUp service-tag"
+                            <div key={index}
+                                 className="col-xxl-2 col-lg-4 col-md-6 col-sm-12 mx-auto wow fadeInUp service-tag"
                                  data-wow-delay=".3s">
-                                <Link to="/booking" onClick={() => window.scrollTo(0, 0)}>
-                                    <div className="bg-light rounded p-5 services-item">
+                                <button style={{border: 'none', background: 'none', borderRadius: '22px'}} onClick={() => handleCategoryClick(category.id)}>
+                                    <div className="bg-light rounded p-5 services-item ">
                                         <div className="d-flex"
                                              style={{alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
                                             <div className="mb-4">
@@ -48,14 +54,13 @@ const Category = () => {
                                             </div>
                                         </div>
                                         <h4 style={h4size}>{category.name}</h4>
-                                        <RatingStars rating={category.averageRating}/>
+                                        <CalculateRatingStarts rating={category.averageRating}/>
                                     </div>
-                                </Link>
+                                </button>
                             </div>
                         )
                     })}
                 </div>
-
             </div>
         </div>
     )

@@ -10,3 +10,12 @@ export const fetchJobsPaging = async (page) => {
     }
 }
 
+export const fetchJobById = async (id) => {
+    try {
+        const response = await axios.get(`${InforUrl}/jobs/category/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data: ', error);
+    }
+}
+
