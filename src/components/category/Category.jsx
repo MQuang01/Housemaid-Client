@@ -3,8 +3,10 @@ import {Link} from "react-router-dom";
 import RatingStars from "./RatingStars";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {InforUrl} from "../../until/InforUrl";
+import {fetchCategory} from "../../service/CategoryService";
 
-const Service = () => {
+const Category = () => {
     const imgService = {
         height: '118px',
         width: '163px',
@@ -17,19 +19,13 @@ const Service = () => {
     }
     const [categories, setCategory] = useState([]);
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://192.168.1.39:8080/api/categories');
-                setCategory(response.data);
-            } catch (error) {
-                console.error('Error fetching data: ', error);
-            }
-        };
-        fetchData()
+        fetchCategory().then((data) => setCategory(data));
     }, []);
 
+
+
     return (
-        <div className="container-fluid services py-5" id="service-list">
+        <div className="container-fluid services" id="service-list">
             <div className="container text-center py-5">
                 <div className="text-center mb-5 wow fadeInUp" data-wow-delay=".3s">
                     <h5 className="mb-2 px-3 py-1 text-dark rounded-pill d-inline-block border border-2 border-primary">Dịch
@@ -48,22 +44,20 @@ const Service = () => {
                                         <div className="d-flex"
                                              style={{alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
                                             <div className="mb-4">
-                                                <img src={category.fileInfo.url} style={imgService} alt="domestichelp"/>
+                                                <img src={category.url} style={imgService} alt="domestichelp"/>
                                             </div>
                                         </div>
                                         <h4 style={h4size}>{category.name}</h4>
-                                        <RatingStars rating={3.4}/>
+                                        <RatingStars rating={category.averageRating}/>
                                     </div>
                                 </Link>
                             </div>
-
                         )
                     })}
-
                 </div>
 
             </div>
         </div>
     )
 }
-export default Service;
+export default Category;

@@ -1,0 +1,1 @@
+export const InforUrl = "http://192.168.1.26:8080/api";

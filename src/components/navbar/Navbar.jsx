@@ -1,19 +1,34 @@
-import React from 'react'
+import React, {useState} from 'react'
+import {useNavigate} from "react-router-dom";
 
 const Navbar = () => {
+    const nav = useNavigate();
+    const [jwt, setJwt] = useState(localStorage.getItem("jwt"))
+
+    const handleLogout = () => {
+        localStorage.removeItem("jwt")
+        setJwt(null)
+        nav("/login")
+    }
+
+    const handleLogin = () => {
+        nav("/login")
+    }
+
+
     return(
         <>
         <div className="container-fluid topbar-top bg-primary">
             <div className="container">
                 <div className="d-flex justify-content-between topbar py-2">
                     <div className="d-flex align-items-center flex-shrink-0 topbar-info">
-                        <a href="#" className="me-4 text-secondary"><i className="fas fa-map-marker-alt me-2 text-dark"></i>28 nguyen Tri Phuong</a>
-                        <a href="#" className="me-4 text-secondary"><i className="fas fa-phone-alt me-2 text-dark"></i>+01234567890</a>
-                        <a href="#" className="text-secondary"><i className="fas fa-envelope me-2 text-dark"></i>Example@gmail.com</a>
+                        <a href="#" className="me-4 text-secondary"><i className="fas fa-map-marker-alt me-2 text-dark"></i>28 Nguyễn Tri Phương</a>
+                        <a href="#" className="me-4 text-secondary"><i className="fas fa-phone-alt me-2 text-dark"></i>+(84) 123 456 84 </a>
+                        <a href="#" className="text-secondary"><i className="fas fa-envelope me-2 text-dark"></i>Example@example.com</a>
                     </div>
                     <div className="text-end pe-4 me-4 border-end border-dark search-btn">
                         <div className="search-form">
-                            <form method="post" action="index.html">
+                            <form method="post" action="/index.html">
                                 <div className="form-group">
                                     <div className="d-flex">
                                         <input type="search" className="form-control border-0 rounded-pill" name="search-input" value="" placeholder="Tìm kiếm" required="" />
@@ -27,7 +42,10 @@ const Navbar = () => {
                         <a href="#" className="me-4"><i className="fab fa-facebook-f text-dark"></i></a>
                         <a href="#" className="me-4"><i className="fab fa-twitter text-dark"></i></a>
                         <a href="#" className="me-4"><i className="fab fa-instagram text-dark"></i></a>
-                        <a href="#" className=""><i className="fab fa-linkedin-in text-dark"></i></a>
+                        <a className="d-flex me-4 align-items-center" style={{cursor: "pointer"}} onClick={jwt ? handleLogout : handleLogin}>
+                            <i className="fas fa-sign-in-alt text-dark"></i>
+                            <span className="ms-2 text-dark fw-bold">{jwt ? "Đăng xuất" : "Đăng nhập"}</span>
+                        </a>
                     </div>
                 </div>
             </div>
