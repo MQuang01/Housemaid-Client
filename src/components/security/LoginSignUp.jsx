@@ -1,18 +1,20 @@
 import React, {useEffect, useState} from "react"
-import './LoginSignUp.css'
-import {Link} from "react-router-dom";
-import axios from "axios";
-import toastr from 'toastr';
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {set, useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+
+import {Link} from "react-router-dom";
+
+import * as yup from "yup";
+import './LoginSignUp.css'
+import {GetDataUser, Login, Logout} from "../../service/AuthService";
 
 const schema = yup.object({
-    username: yup.string().required("Please enter username"),
-    password: yup.string().required("Please enter password"),
+    username: yup.string().required("Tên tài khoản không được để trống"),
+    password: yup.string().required("Mật khẩu không được để trống"),
 })
 const LoginSignUp = () => {
-
+        let navigate = useNavigate();
         const {
             register,
             handleSubmit,
@@ -25,19 +27,9 @@ const LoginSignUp = () => {
         const handleLogin = async (data, e) => {
             e.preventDefault()
             if(data.username && data.password) {
-                try {
-                    const response = await axios.post("http://localhost:8080/api/auths/login", data)
-                    console.log(response)
-                    toastr.success(response.data)
-                } catch (error) {
-                    resetField("password", {keepError: true})
-                    toastr.error("Wrong username or password");
-                }
+                await Login(data.username, data.password);
             }
         }
-
-
-
 
     return (
         <div className='row vh-100 g-0'>
@@ -59,18 +51,18 @@ const LoginSignUp = () => {
                         </Link>
 
                         <div className="text-center mb-5">
-                            <h3>Login</h3>
-                            <p className="text-secondary">Get access to your account</p>
+                            <h3>Đăng nhập</h3>
+                            <p className="text-secondary">Nhận quyền truy cập vào tài khoản của bạn</p>
                         </div>
 
                         <button className='btn btn-outline-secondary btn-lg w-100 mb-3'>
                             <i className="fa-brands fa-google text-danger me-1 fs-6"></i>
-                            Login with Google
+                            Đăng nhập bằng Google
                         </button>
 
                         <button className='btn btn-outline-secondary btn-lg w-100'>
                             <i className="fa-brands fa-facebook-f text-info me-1 fs-6"></i>
-                            Login with Facebook
+                            Đăng nhập bằng Facebook
                         </button>
 
                         <div className="position-relative">
@@ -88,7 +80,7 @@ const LoginSignUp = () => {
                                        className={`form-control form-control-lg fs-6
                                        ${errors?.username?.message ? "is-invalid" : ""}`}
                                        {...register("username")}
-                                       placeholder="Username"/>
+                                       placeholder="Tên tài khoản"/>
                                 <span className="invalid-feedback">{errors?.username?.message}</span>
 
                             </div>
@@ -101,7 +93,7 @@ const LoginSignUp = () => {
                                 <input type="password" className={`form-control form-control-lg fs-6 
                                        ${errors?.password?.message ? "is-invalid" : ""}`}
                                        {...register("password")}
-                                       placeholder="Password"/>
+                                       placeholder="Mật khẩu"/>
                                 <span className="invalid-feedback">{errors?.password?.message}</span>
                             </div>
 
@@ -109,19 +101,19 @@ const LoginSignUp = () => {
                                 <div className="form-check">
                                     <input type="checkbox" className="form-check-input" id="formCheck"/>
                                     <label form="formCheck" className="form-check-label text-secondary">
-                                        <small>Remember Me</small>
+                                        <small>Ghi nhớ tài khoản</small>
                                     </label>
                                 </div>
                                 <div>
-                                    <small><Link to="#" className="text-info fw-normal">Forgot Password?</Link></small>
+                                    <small><Link to="#" className="text-info fw-normal">Quên mật khẩu?</Link></small>
                                 </div>
                             </div>
 
-                            <button className="button-32 btn-primary btn-lg w-100 mb-3" type="submit">Login</button>
+                            <button className="button-32 btn-primary btn-lg w-100 mb-3 text-uppercase" type="submit">Đăng nhập</button>
                         </form>
 
                         <div className="text-center">
-                            <small>Don't have an account? <Link to="#" className="text-info fw-bold">Sign Up</Link></small>
+                            <small>Bạn chưa có tài khoản? <Link to="#" className="text-info fw-bold">Đăng ký</Link></small>
                         </div>
                     </div>
                 </div>
