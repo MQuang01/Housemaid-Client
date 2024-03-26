@@ -3,6 +3,7 @@ import {InforUrl} from "../../until/InforUrl";
 import axios from "axios";
 import {fetchJobsPaging} from "../../service/JobService";
 import Pagination from "../pagination/Pagination";
+import {formatMoney} from "../../until/FormatMoney";
 
 const TablePrice = () => {
     const [loading,setLoading] = useState(false);
@@ -21,7 +22,11 @@ const TablePrice = () => {
 
     useEffect(() => {
         fetchJobsPaging(dataPage.page).then((data) => {
-            setJob(data.content);
+            const formattedData = data.content.map(item => ({
+                ...item,
+                price: formatMoney(item.price)
+            }))
+            setJob(formattedData);
             setDataPage(
                 {
                     ...dataPage,
@@ -61,7 +66,7 @@ const TablePrice = () => {
                                         <td>{index + 1}</td>
                                         <td><img src={job.urlImage} height='40px' width='40px' alt="domestichelp"/></td>
                                         <td>{job.name}</td>
-                                        <td>{job.price} .VNĐ</td>
+                                        <td>{job.price}</td>
                                         <td>~{job.timeApprox} phút/đơn vị</td>
                                     </tr>
                                 ))}
