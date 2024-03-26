@@ -37,7 +37,7 @@ const Service = () => {
                     <h2>Với trình độ nghiệp vụ được đào tạo bài bản, nhân viên tại đây luôn làm việc với tinh thần trách
                         nhiệm cao nhất.</h2>
                 </div>
-                
+
                 <div className="row g-5" style={{'--bs-gutter-x': '0.1rem'}}>
                     {categories.map((category, index) => {
                         return (
