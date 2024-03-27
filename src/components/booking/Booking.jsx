@@ -148,6 +148,30 @@ const Booking = () => {
     return (
         <>
             <Navbar/>
+
+            {/*<div className="container-fluid page-header py-5">*/}
+            {/*    <div className="container text-center py-5">*/}
+            {/*        /!*<h1 className="display-2 text-white mb-4 animated slideInDown">About</h1>*!/*/}
+            {/*        <nav aria-label="breadcrumb">*/}
+            {/*            <ol className="breadcrumb justify-content-center mb-0 animated slideInDown">*/}
+            {/*                <li className="breadcrumb-item"><a href="/">Trang chủ</a></li>*/}
+            {/*                <li className="breadcrumb-item text-white" aria-current="page">Đặt lịch</li>*/}
+            {/*            </ol>*/}
+            {/*        </nav>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+
+            <div>
+                <nav >
+                    <ol className="breadcrumb mb-0 animated slideInDown" style={{fontSize:'20px',marginLeft:'112px',marginTop:'50px'}}>
+                        <li className="breadcrumb-item" ><a href="/">Trang chủ</a></li>
+                        <li className="breadcrumb-item " aria-current="page" style={{color:'#e6e600'}}>Đặt lịch</li>
+                        <li className="breadcrumb-item " aria-current="page">Bước {currentForm}</li>
+
+                    </ol>
+                </nav>
+            </div>
+
             <div className="container-fluid py-3 wow fadeInUp" data-wow-delay=".3s">
                 <div className="container py-3">
                     <div className="bg-light px-4 py-3 rounded">

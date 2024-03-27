@@ -37,7 +37,7 @@ const Pagination = ({dataPage, setDataPage}) => {
     return (
 
             <div>
-                <ul className="pagination" id="paging">
+                <ul className="pagination" id="paging" style={{paddingLeft:'81%'}}>
                     <li className={`page-item ${dataPage.page === 0 ? 'disabled' : ''}`}>
                         <button className="page-link" tabIndex="-1" aria-disabled="true"
                                 onClick={handlePrev}>Previous</button>
