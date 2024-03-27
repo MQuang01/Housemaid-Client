@@ -1,26 +1,26 @@
-import Home from "./Home";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Suspense, useState} from "react";
+import {Suspense} from "react";
 import Booking from "./components/booking/Booking";
+import Auth from "./components/auth/Auth";
+import {AuthProvider} from "./context/AuthContext";
+import Home from "./screens/Home";
 
-import Login from "./components/auth/Login";
 
 function App() {
 
     return(
         <>
             <BrowserRouter>
-                {/*<AuthProvider>*/}
+                <AuthProvider>
                     <Suspense>
                         <Routes>
-                            <Route path='/login' element={<Login />} />
+                            <Route path='/auth' element={<Auth />} />
                             <Route path='/' element={<Home/>} />
                             <Route path='/booking' element={<Booking />} />
                         </Routes>
                     </Suspense>
-                {/*</AuthProvider>*/}
+                </AuthProvider>
             </BrowserRouter >
-            {/*<ToastContainer />*/}
         </>
     )
 }
