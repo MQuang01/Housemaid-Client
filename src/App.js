@@ -5,7 +5,6 @@ import Auth from "./components/auth/Auth";
 import {AuthProvider} from "./context/AuthContext";
 import Home from "./screens/Home";
 
-import Login from "./components/auth/Login";
 import UserInfo from "./components/userinfo/UserInfo";
 
 
