@@ -1,5 +1,4 @@
 import axios from "axios";
-import toastr from "toastr";
 
 export const accessToken = sessionStorage.getItem("user");
 export const Login = async (username, password) => {

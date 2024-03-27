@@ -37,17 +37,7 @@ const UserInfo = () => {
         event.preventDefault();
         setIsUpdatedUser(false);
     }
-
-    // function togglePasswordVisibility(name) {
-    //     var eye = document.getElementById("hide-password");
-    //     if (passwordInput.type === "password") {
-    //         passwordInput.type = "text";
-    //         eye=<i className="fa-regular fa-eye"></i>;
-    //     } else {
-    //         passwordInput.type = "password";
-    //         eye=<i className="fa-regular fa-eye-slash"></i>;
-    //     }
-    // }
+    
     const [isShowPassword, setIsShowPassword] = useState({
         password: false,
         confirmPassword: false,
@@ -94,12 +84,7 @@ const UserInfo = () => {
                 <nav className="side-menu">
                     <ul className="nav">
                         <li onClick={handleUpdateTrue}><a href="#"><span className="fa fa-user"></span> Thông tin</a></li>
-                        <li onClick={handleUpdateFalse}><a href="#"><span className="fa fa-cog"></span> Đổi mật khẩu</a></li>
-                        {/*<li><a href="#"><span className="fa fa-credit-card"></span> Billing</a></li>*/}
-                        {/*<li><a href="#"><span className="fa fa-envelope"></span> Messages</a></li>*/}
-
-                        {/*<li><a href="user-drive.html"><span className="fa fa-th"></span> Drive</a></li>*/}
-                        {/*<li><a href="#"><span className="fa fa-clock-o"></span> Reminders</a></li>*/}
+                        <li onClick={handleUpdateFalse}><a href="#"><span className="fa fa-cog"></span> Đổi mật khẩu</a></li>    
                     </ul>
                 </nav>
             </div>
@@ -245,29 +230,6 @@ const UserInfo = () => {
                                 </div>
                             </div>
                         </div>
-
-
-                        {/*<div className="mb-3 row">*/}
-                        {/*    <div className="col-md-3">*/}
-                        {/*        <label className="form-label">Tên tài khoản</label>*/}
-                        {/*    </div>*/}
-                        {/*    <div className="col-md-9">*/}
-                        {/*        <div className="input-group input-group-merge">*/}
-                        {/*            <input type="text" className="form-control" placeholder="2 hours" value={user.username} readOnly />*/}
-                        {/*        </div>*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
-                        {/*<div className="mb-3 row">*/}
-                        {/*    <div className="col-md-3">*/}
-                        {/*        <label className="form-label">Tổng giá tiền</label>*/}
-                        {/*    </div>*/}
-                        {/*    <div className="col-md-9">*/}
-                        {/*        <div className="input-group input-group-merge">*/}
-                        {/*            <input type="text" className="form-control" placeholder="$50" value={user.createdAt} readOnly />*/}
-                        {/*        </div>*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
-
 
                         <div className="text-center row g-4 ">
                             <div className="col-md-12">
