@@ -38,18 +38,32 @@ const UserInfo = () => {
         setIsUpdatedUser(false);
     }
 
+    // function togglePasswordVisibility(name) {
+    //     var eye = document.getElementById("hide-password");
+    //     if (passwordInput.type === "password") {
+    //         passwordInput.type = "text";
+    //         eye=<i className="fa-regular fa-eye"></i>;
+    //     } else {
+    //         passwordInput.type = "password";
+    //         eye=<i className="fa-regular fa-eye-slash"></i>;
+    //     }
+    // }
+    const [isShowPassword, setIsShowPassword] = useState({
+        password: false,
+        confirmPassword: false,
+        oldPassword: false
+    });
 
-    function togglePasswordVisibility(name) {
-        var passwordInput = document.getElementById(`passwordInput${name}`);
-        var eye = document.getElementById("hide-password");
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eye=<i className="fa-regular fa-eye"></i>;
-        } else {
-            passwordInput.type = "password";
-            eye=<i className="fa-regular fa-eye-slash"></i>;
-        }
-    }
+    const toggleShowPassword = (fieldName) => {
+        setIsShowPassword(prevState => ({
+            ...prevState,
+            [fieldName]: !prevState[fieldName]
+        }));
+        console.log(isShowPassword)
+    };
+
+
+
 
     return (
         <>
@@ -64,11 +78,11 @@ const UserInfo = () => {
                 </nav>
             </div>
 
-            <div className="container">
+            <div className="container" style={{marginLeft:'190px'}}>
                 <div className="view-account">
                     <section className="module">
                         <div className="module-inner">
-            <div className="side-bar">
+            <div className="side-bar" style={{marginTop:'70px'}}>
                 <div className="user-info">
                     <img className="img-profile img-circle img-responsive center-block" src={user.fileInfoResDto} alt=""/>
                         <ul className="meta list list-unstyled">
@@ -111,12 +125,6 @@ const UserInfo = () => {
                                     <input
                                         type="text"
                                         className="form-control"
-                                        id="basic-icon-default-fullname"
-
-                                        value={user.fullName}
-                                        onChange={handleInputChange}
-                                        disabled={true}
-
                                     />
                                 </div>
                             </div>
@@ -136,7 +144,7 @@ const UserInfo = () => {
 
                                         value={user.address}
                                         onChange={handleInputChange}
-                                        disabled={true}
+                                        // disabled={true}
 
                                     />
                                     <span
@@ -162,7 +170,7 @@ const UserInfo = () => {
 
                                         value={user.email}
                                         onChange={handleInputChange}
-                                        disabled={true}
+                                        // disabled={true}
 
                                     />
                                     {/*<span id="basic-icon-default-email2" className="input-group-text">@gmail.com</span>*/}
@@ -185,7 +193,9 @@ const UserInfo = () => {
                                         className="form-control phone-mask"
 
                                         value={user.phone}
-                                        disabled={true}
+                                        onChange={handleInputChange}
+
+                                        // disabled={true}
 
                                     />
                                 </div>
@@ -208,7 +218,7 @@ const UserInfo = () => {
 
                                         value={user.dob}
                                         onChange={handleInputChange}
-                                        disabled={true}
+                                        // disabled={true}
 
                                     />
                                 </div>
@@ -229,7 +239,7 @@ const UserInfo = () => {
 
                                         value={user.gender}
                                         onChange={handleInputChange}
-                                        disabled={true}
+                                        // disabled={true}
 
                                     />
                                 </div>
@@ -286,22 +296,18 @@ const UserInfo = () => {
                                 <div className="input-group input-group-merge">
                     <span id="basic-icon-default-fullname2" className="input-group-text"><i className="fa-solid fa-key"></i></span>
                                     <input
-                                        type="password"
+                                        type={`${isShowPassword.oldPassword ? "text" : "password"}`}
                                         className="form-control"
-                                        id="passwordInputold"
-                                        placeholder="John Doe"
-                                        aria-label="John Doe"
-                                        aria-describedby="basic-icon-default-fullname2"
-                                        value={user.password}
-                                        onChange={handleInputChange}
-
                                     />
+
                                     <span
                                         id="hide-password"
                                         className="input-group-text"
                                         style={{cursor: 'pointer', color: '#000', background: '#FDF000'}}
-
-                                    ><i className="fa-regular fa-eye-slash"></i></span>
+                                        onClick={() => toggleShowPassword('oldPassword')}
+                                    >
+                                        <i className={`fa ms-2 ${isShowPassword.oldPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -314,22 +320,18 @@ const UserInfo = () => {
                                 <div className="input-group input-group-merge">
                                     <span className="input-group-text"><i className="fa-solid fa-lock"></i></span>
                                     <input
-                                        type="password"
-                                        id="passwordInputnew"
+                                        type={`${isShowPassword.password ? "text" : "password"}`}
                                         className="form-control"
-                                        placeholder="fullName"
-                                        aria-label="john.doe"
-                                        aria-describedby="basic-icon-default-address"
-                                        value={user.password}
-                                        onChange={handleInputChange}
 
                                     />
                                     <span
                                         id="hide-password"
                                         className="input-group-text"
                                         style={{cursor: 'pointer', color: '#000', background: '#FDF000'}}
-
-                                    ><i className="fa-regular fa-eye-slash"></i></span>
+                                        onClick={() => toggleShowPassword('password')}
+                                    >
+                                        <i className={`fa ms-2 ${isShowPassword.password ? "fa-eye" : "fa-eye-slash"}`}></i>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -342,22 +344,20 @@ const UserInfo = () => {
                                 <div className="input-group input-group-merge">
                                     <span className="input-group-text"><i className="fa-solid fa-lock"></i></span>
                                     <input
-                                        type="password"
-                                        id="passwordInputcheck"
+                                        type={`${isShowPassword.confirmPassword ? "text" : "password"}`}
                                         className="form-control"
-                                        placeholder="fullName"
-                                        aria-label="john.doe"
-                                        aria-describedby="basic-icon-default-address"
-                                        value={user.password}
-                                        onChange={handleInputChange}
 
                                     />
                                     <span
                                         id="hide-password"
                                         className="input-group-text"
                                         style={{cursor: 'pointer', color: '#000', background: '#FDF000'}}
+                                        onClick={() => toggleShowPassword('confirmPassword')}
 
-                                    ><i className="fa-regular fa-eye-slash"></i></span>
+                                    >
+                                        <i className={`fa ms-2 ${isShowPassword.confirmPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
+
+                                    </span>
                                 </div>
                             </div>
                         </div>

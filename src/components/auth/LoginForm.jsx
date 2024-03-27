@@ -23,6 +23,7 @@ const LoginForm = () => {
     })
     const { login } = useAuth();
     const handleLogin = async (data, e) => {
+        // register("username", data.username)
         e.preventDefault()
         if(data.username && data.password) {
             if(await Login(data.username, data.password)) {

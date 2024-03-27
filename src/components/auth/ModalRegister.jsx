@@ -41,6 +41,7 @@ const ModalRegister = ({show, setShow}) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [typeUser, setTypeUser] = useState('CUSTOMER');
     const [isShowPassword, setIsShowPassword] = useState(false);
+
     const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
     const {
         register,
