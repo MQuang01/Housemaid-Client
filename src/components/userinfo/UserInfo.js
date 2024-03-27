@@ -44,10 +44,10 @@ const UserInfo = () => {
         var eye = document.getElementById("hide-password");
         if (passwordInput.type === "password") {
             passwordInput.type = "text";
-            eye=<i className="fa-regular fa-eye"></i>;
+            eye =<i className="fa-regular fa-eye"></i>;
         } else {
             passwordInput.type = "password";
-            eye=<i className="fa-regular fa-eye-slash"></i>;
+            eye =<i className="fa-regular fa-eye-slash"></i>;
         }
     }
 
