@@ -20,7 +20,7 @@ const schema = yup.object({
         .max(100, "Địa chỉ không được vượt quá 100 ký tự"),
     phone: yup.string()
         .required("Yêu cầu nhập SĐT")
-        .matches(/^[0-9]+$/, "SĐT chỉ được chứa các chữ số")
+        .matches(/((09|03|07|08|05)+([0-9]{8}))/, "SĐT phải đúng định dạng")
         .min(10, "SĐT phải có ít nhất 10 số")
         .max(11, "SĐT không được vượt quá 11 số"),
     dob: yup.date()
@@ -92,7 +92,7 @@ const ModalRegister = ({show, setShow}) => {
                                 <button type="button" className="btn-close"
                                         onClick={handleClose}></button>
                             </div>
-                            <div className="form-group has-validation">
+                            <div className="form-group">
                                 <label className="ms-1 title-input">Avatar</label>
                                 <input
                                     type="file"
@@ -335,7 +335,6 @@ const ModalRegister = ({show, setShow}) => {
                                             Close
                                         </button>
                                     </div>
-
                                 </div>
 
                             </form>

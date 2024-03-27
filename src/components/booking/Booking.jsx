@@ -1,8 +1,51 @@
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import {useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+import {fetchJobById} from "../../service/JobService";
+import {formatMoney} from "../../until/FormatMoney";
+import toastr from "toastr";
 
 const Booking = () => {
+    const location = useLocation();
+    const {state} = location;
+    const [selectedJobs, setSelectedJob] = useState([]);
+    const [listJob, setListJob] = useState([]);
+    const [currentForm, setCurrentForm] = useState(1);
+    const categoryId = state && state.idCate;
+    const [totalPriceRaw, setTotalPriceRaw] = useState(0); // Lưu trữ giá trị chưa được định dạng
+    const [totalPriceFormatted, setTotalPriceFormatted] = useState("0");
+
+    useEffect(() => {
+        if (categoryId == null) {
+            window.location.href = '/';
+        }
+        fetchJobById(categoryId).then((data) => {
+            const formattedData = data.map(item => ({
+                ...item,
+                price: formatMoney(item.price)
+            }))
+            setListJob(formattedData);
+        })
+
+    }, [])
+
+    useEffect(() => {
+        calculateTotalPrice();
+    }, [selectedJobs, listJob]);
+
+    useEffect(() => {
+        setTotalPriceFormatted(formatMoney(totalPriceRaw).toLocaleString()); // Định dạng giá trị khi giá trị thay đổi
+    }, [totalPriceRaw]);
+
+    const calculateTotalPrice = () => {
+        // Sử dụng phương thức reduce để tính tổng giá trị của các dịch vụ đã chọn
+        const totalPrice = selectedJobs.reduce((total, service) => {
+            const selectedService = listJob.find(item => item.name === service);
+            return total + parseInt(selectedService.price) * 1000;
+        }, 0);
+        setTotalPriceRaw(totalPrice);
+    }
 
     const [selectedServices, setSelectedServices] = useState([]);
     const [servicesData, setServicesData] = useState([]);
@@ -19,19 +62,38 @@ const Booking = () => {
             {id: 2, name: "Pest Control-2", price: "150.000 VNĐ", time: "45 phút/đơn vị"},
         ];
 
-        setServicesData(fetchedServicesData);
-    }, []);
+
+    const handleNextForm = () => {
+        if (selectedJobs.length > 0) {
+            setCurrentForm(2);
+        }else {
+            toastr.error("Chọn ít nhất 1 dịch vụ")
+        }
+    };
+
+    const handleBackForm = () => {
+        setCurrentForm(1);
+    };
 
 
     const handleCheckboxChange = (event) => {
         const {value, checked} = event.target;
         if (checked) {
-            setSelectedServices(prevSelectedServices => [...prevSelectedServices, value]);
+            setSelectedJob(prevSelectedJobs => [...prevSelectedJobs, value]);
         } else {
-            setSelectedServices(prevSelectedServices => prevSelectedServices.filter(service => service !== value));
+            setSelectedJob(prevSelectedJobs => prevSelectedJobs.filter(job => job !== value));
         }
     };
+    function selectAllJobs() {
+        console.log("aaaa")
+        const allJobNames = listJob.map(job => job.name);
 
+        setSelectedJob(allJobNames);
+    }
+
+    function cancelSelectAll() {
+        setSelectedJob([]);
+    }
     const handleNextForm = () => {
         setCurrentForm(currentForm + 1);
     };
@@ -114,8 +176,11 @@ const Booking = () => {
                 <div className="container py-3">
                     <div className="bg-light px-4 py-3 rounded">
                         <div className="text-center">
-                            <h1 className="display-5 mb-5">Find Your Pest Control Services</h1>
+                            <h1 className="display-5 mb-5">Chọn công việc bạn muốn thực hiện</h1>
                         </div>
+
+                        {/*form-1*/}
+
                         {currentForm === 1 && (
                             <form className="text-center mb-4" action="#" style={{borderRadius:'10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)', padding:'20px'}}>
                                 <div className="table-responsive">
@@ -123,46 +188,66 @@ const Booking = () => {
                                         <thead>
                                         <tr>
                                             <th>Tên dich vụ</th>
-                                            <th>Giá tiền</th>
+                                            <th>Khoảng giá</th>
                                             <th>Thời gian ước tính</th>
-                                            <th>Lựa chọn</th>
+                                            <th>
+                                                Lựa chọn
+                                                <button
+                                                    type="button"
+                                                    className="ms-2 btn btn-primary"
+                                                    onClick={() => {
+                                                        if (selectedJobs.length > 0 && selectedJobs.length === listJob.length) {
+                                                            cancelSelectAll();
+                                                        } else {
+                                                            selectAllJobs();
+                                                        }
+                                                    }}
+                                                >
+                                                    {selectedJobs.length > 0 && selectedJobs.length === listJob.length ? 'Hủy chọn' : 'Chọn tất cả'}
+                                                </button>
+                                            </th>
+
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {servicesData.map(service => (
-                                            <tr key={service.id}>
-                                                <td>{service.name}</td>
-                                                <td>{service.price}</td>
-                                                <td>{service.time}</td>
-                                                <td>
+
+                                        {listJob.map(job => (
+                                            <tr key={job.id}>
+                                                <td>{job.name}</td>
+                                                <td>{job.price}</td>
+                                                <td>~{job.timeApprox} phút/đơn vị</td>
+                                                <td className="d-flex align-items-center justify-content-center">
                                                     <input
+                                                        className="form-check-input"
                                                         type="checkbox"
-                                                        id={service.id}
-                                                        value={service.name}
+                                                        id={job.id}
+                                                        value={job.name}
+                                                        checked={selectedJobs.includes(job.name)}
                                                         onChange={handleCheckboxChange}
                                                     />
+                                                    <input className="form-control ms-2 form-control form-control-sm w-25" type="number"/>
                                                 </td>
+
                                             </tr>
                                         ))}
                                         </tbody>
                                     </table>
                                 </div>
+                                {selectedJobs.length > 0 && (
+
                                 {selectedServices.length > 0 && (
                                     <div className="d-flex justify-content-end gap-5" style={{marginRight: '24rem'}}>
                                         <div>
-                                            <p>Total Price: {selectedServices.reduce((total, service) => {
-                                                const selectedService = servicesData.find(item => item.name === service);
-                                                return total + parseInt(selectedService.price.replace(/\D/g, ''));
-                                            }, 0)} VNĐ</p>
-                                        </div>
-                                        <div>
-                                            <p>Total Time: ~{selectedServices.reduce((total, service) => {
-                                                const selectedService = servicesData.find(item => item.name === service);
-                                                return total + parseInt(selectedService.time.replace(/\D/g, ''));
-                                            }, 0)} phút/đơn vị</p>
+                                            <p>Tổng giá ước tính: ~{totalPriceFormatted}</p>
                                         </div>
                                     </div>
                                 )}
+                                <div className="row g-4">
+                                    <div className="col-md-12">
+                                        <button type="button"
+                                                className="btn btn-primary border-0 rounded-pill px-4 py-3"
+                                                onClick={handleNextForm}>Tiếp tục
+
                                 <div className="row g-4 ">
                                     <div className="col-md-12 ">
                                         <button type="button"
@@ -173,7 +258,26 @@ const Booking = () => {
                                 </div>
                             </form>
                         )}
+
+                        {/*form-2*/}
                         {currentForm === 2 && (
+
+                            <form className="text-center mb-4" action="#">
+                                <div className="row g-2">
+                                    <div className="col-md-3">
+                                        <label htmlFor="employee">Số lượng nhân viên:</label>
+                                        <select id="employee" className="form-select form-select-sm">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="row g-2 mt-3">
+                                    <div className="col-md-6">
+                                        <label htmlFor="time">Thời gian làm việc:</label>
+                                        <input type="time" id="time" className="form-control"/>
+
                             <form action="#" className=" mb-4" style={{borderRadius:'10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)', padding:'20px'}}>
                                 <div className="text-left row g-4 ">
                                     <div className="col-md-12">
@@ -202,10 +306,15 @@ const Booking = () => {
                                                    id="employee3" value="3"/>
                                             <label className="form-check-label" htmlFor="employee3">3</label>
                                         </div>
+
                                     </div>
                                 </div>
                                 <div className="row g-2 mt-3">
                                     <div className="col-md-6">
+
+                                        <label htmlFor="date">Ngày làm việc:</label>
+                                        <input type="date" id="date" className="form-control"/>
+
                                         <label htmlFor="time">Thời gian bắt đầu làm việc:</label>
                                         <div
                                             className="text-center mt-2">{selectedTime.start} - {selectedTime.end}</div>
@@ -224,6 +333,7 @@ const Booking = () => {
                                             <label htmlFor="date" style={{marginBottom: '15px'}}>Ngày bắt đầu:</label>
                                             <input type="date" id="date" className="form-control "/>
                                         </div>
+
 
                                     </div>
                                 </div>
@@ -248,7 +358,11 @@ const Booking = () => {
                                     <div className="col-md-12">
                                         <button type="button"
                                                 className="btn btn-primary border-0 rounded-pill px-4 py-3"
+
+                                                onClick={handleBackForm}>Trở lại
+
                                                 onClick={handleNextForm}>NEXT STEP
+
                                         </button>
                                     </div>
                                 </div>

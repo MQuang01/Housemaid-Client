@@ -1,10 +1,10 @@
-import Navbar from "./navbar/Navbar";
-import Slide from "./slide/Slide";
-import Category from "./category/Category";
-import TablePrice from "./tableprice/TablePrice";
-import Footer from "./footer/Footer";
+import Navbar from "./components/navbar/Navbar";
+import Slide from "./components/slide/Slide";
+import Category from "./components/category/Category";
+import TablePrice from "./components/tableprice/TablePrice";
+import Footer from "./components/footer/Footer";
 import { useJwt } from "react-jwt";
-import {accessToken} from "../service/AuthService";
+import {accessToken} from "./service/AuthService";
 
 function Home() {
     const {decodedToken, isExprired} = useJwt(accessToken);

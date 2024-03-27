@@ -235,7 +235,7 @@ const UserInfo = () => {
                                 </div>
                             </div>
                         </div>
-                        
+
 
                         {/*<div className="mb-3 row">*/}
                         {/*    <div className="col-md-3">*/}
