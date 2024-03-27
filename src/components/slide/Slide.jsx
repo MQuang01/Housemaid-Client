@@ -24,20 +24,95 @@ const Slide = () => {
 
               </ol>
               <div className="carousel-inner" role="listbox">
-                  <div className="carousel-item active">
+                  <div className="carousel-item active" >
                       <img src={"/assets/img/carousel-1.jpg"} className="img-fluid w-100" alt="First slide" />
+                      <div className="carousel-caption">
+                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
+                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
+                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
+                              <ul style={{fontSize:'20px'}}>
+                                  <li>Cam kết giá tốt nhất</li>
+                                  <li>Chất lượng hàng đầu</li>
+                                  <li>Chiết khấu hấp dẫn</li>
+                                  <li>Chăm sóc khách hàng 5 sao</li>
+                                  <li>Công nghệ vệ sinh tốt nhất</li>
+
+                              </ul>
+                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
+                          </div>
+                      </div>
                   </div>
                   <div className="carousel-item">
                       <img src={"/assets/img/carousel-2.jpg"} className="img-fluid w-100" alt="Second slide"/>
+                      <div className="carousel-caption">
+                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
+                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
+                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
+                              <ul style={{fontSize:'20px'}}>
+                                  <li>Cam kết giá tốt nhất</li>
+                                  <li>Chất lượng hàng đầu</li>
+                                  <li>Chiết khấu hấp dẫn</li>
+                                  <li>Chăm sóc khách hàng 5 sao</li>
+                                  <li>Công nghệ vệ sinh tốt nhất</li>
+
+                              </ul>
+                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
+                          </div>
+                      </div>
                   </div>
                   <div className="carousel-item">
                       <img src={"/assets/img/carousel-3.jpg"} className="img-fluid w-100" alt="Third slide"/>
+                      <div className="carousel-caption">
+                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
+                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
+                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
+                              <ul style={{fontSize:'20px'}}>
+                                  <li>Cam kết giá tốt nhất</li>
+                                  <li>Chất lượng hàng đầu</li>
+                                  <li>Chiết khấu hấp dẫn</li>
+                                  <li>Chăm sóc khách hàng 5 sao</li>
+                                  <li>Công nghệ vệ sinh tốt nhất</li>
+
+                              </ul>
+                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
+                          </div>
+                      </div>
                   </div>
                   <div className="carousel-item">
                       <img src={"/assets/img/carousel-4.jpg"} className="img-fluid w-100" alt="Fourth slide"/>
+                      <div className="carousel-caption">
+                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
+                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
+                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
+                              <ul style={{fontSize:'20px'}}>
+                                  <li>Cam kết giá tốt nhất</li>
+                                  <li>Chất lượng hàng đầu</li>
+                                  <li>Chiết khấu hấp dẫn</li>
+                                  <li>Chăm sóc khách hàng 5 sao</li>
+                                  <li>Công nghệ vệ sinh tốt nhất</li>
+
+                              </ul>
+                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
+                          </div>
+                      </div>
                   </div>
                   <div className="carousel-item">
                       <img src={"/assets/img/carousel-5.jpg"} className="img-fluid w-100" alt="Fifth slide"/>
+                      <div className="carousel-caption">
+                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
+                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
+                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
+                              <ul style={{fontSize:'20px'}}>
+                                  <li>Cam kết giá tốt nhất</li>
+                                  <li>Chất lượng hàng đầu</li>
+                                  <li>Chiết khấu hấp dẫn</li>
+                                  <li>Chăm sóc khách hàng 5 sao</li>
+                                  <li>Công nghệ vệ sinh tốt nhất</li>
+
+                              </ul>
+                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
+                          </div>
+                      </div>
                   </div>
 
               </div>
@@ -51,11 +126,6 @@ const Slide = () => {
               </button>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
-              <button type="button" className="btn btn-primary border-0 rounded-pill px-4 py-3 mt-4 wow fadeInUp" data-wow-delay=".3s" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>
-                  Đặt dịch vụ
-              </button>
-          </div>
       </div>
 
   )
