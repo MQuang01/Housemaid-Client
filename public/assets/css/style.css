@@ -562,6 +562,7 @@
     height: 320px;
 }
 
+
 /*** Pricing Start ***/
 .pricing-item {
     transition: .5s;
@@ -786,3 +787,4 @@
 html {
     scroll-behavior: smooth;
 }
+
