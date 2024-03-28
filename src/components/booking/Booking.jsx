@@ -85,9 +85,8 @@ const Booking = () => {
             fetchJobByCategoryId(categoryId).then(data => {
                 const formattedData = data.map(item => ({
                     ...item,
-                    price: formatMoney(item.price),
-                    quantity: null,
-                    houseSize: null,
+                    quantity: 1,
+                    houseSize: 1,
                     checked: false
                 }));
                 setListJob(formattedData);
@@ -108,19 +107,13 @@ const Booking = () => {
         calculateTotalPrice();
         calculateTotalTimeApprox();
     }, [listJob]);
-    const handleChangeJobChecked = () => {
-        if (listJob.map(e => e.checked).includes(false)) {
-            return;
-        }
-        if (hasJobChecked) {
-            calculateTotalPrice();
-            calculateTotalTimeApprox()
-        }
 
-    }
-    useEffect(() => {
-        handleChangeJobChecked()
-    }, [listJob]);
+    // useEffect(() => {
+    //     if (hasJobChecked) {
+    //         calculateTotalPrice();
+    //         calculateTotalTimeApprox()
+    //     }
+    // }, [listJob]);
 
     function clearChecked() {
         setListJob(listJob.map(item => ({...item, checked: false})));
@@ -136,19 +129,29 @@ const Booking = () => {
         const totalPrice = listJob.reduce((total, job) => {
             if (job.checked) {
                 if (job.type === "Quantity") {
-                    return total + (parseInt(job.price) * job.quantity * 1000);
+                    return total + (parseInt(job.price) * job.quantity);
                 }
                 if (job.type === "Size") {
-                    return total + (parseInt(job.price) * job.houseSize * 1000);
+                    return total + (parseInt(job.price) * job.houseSize);
                 }
             }
             return total;
         }, 0);
+        console.log(totalPrice)
         setTotalPriceRaw(totalPrice);
     };
     const calculateEndTime = (startTime, totalTime) => {
         const timeStart = formatHHMMSinceMidnightToMinutes(startTime);
         const timeEnd = timeStart + formatHHMMSinceMidnightToMinutes(totalTime);
+
+        let endHour = Math.floor(timeEnd / 60);
+        let endMinute = timeEnd % 60;
+
+        // Kiểm tra và điều chỉnh giờ và phút nếu cần
+        if (endMinute >= 60) {
+            endHour += Math.floor(endMinute / 60);
+            endMinute %= 60;
+        }
 
         let formattedEndHour = endHour.toString().padStart(2, '0');
         let formattedEndMinute = endMinute.toString().padStart(2, '0');
@@ -182,7 +185,6 @@ const Booking = () => {
             return e;
         })
         setListJob(updatedJobChecked);
-
     };
     const handleTimeChange = (event) => {
         const selectedValue = event.target.value;
@@ -227,6 +229,7 @@ const Booking = () => {
             }
         }
     }, [timeApprox, infoForm2.limitEmployee]);
+
     useEffect(() => {
         localStorage.setItem('listJob', JSON.stringify(listJob));
     }, [listJob])
@@ -238,12 +241,11 @@ const Booking = () => {
     }, [totalPriceRaw]);
     useEffect(() => {
         localStorage.setItem("confirmPolicy", JSON.stringify(isConfirmPolicy));
-    }, [isConfirmPolicy]);
+    }, [timeApprox, isConfirmPolicy]);
 
     
 
     const handleNextForm = () => {
-
         if (currentForm === 1) {
             if (!hasJobChecked) {
                 toastr.error("Vui lòng chọn ít nhất 1 dịch vụ", "Cảnh báo");
@@ -331,28 +333,24 @@ const Booking = () => {
 
         console.log(initialOrder)
     }
-
+    function getAmount(job){
+        if (job.type === "Quantity") {
+            return parseInt(job.quantity);
+        }
+        if (job.type === "Size") {
+            return parseInt(job.houseSize);
+        }
+    }
     return (
         <>
             <Navbar/>
 
-            {/*<div className="container-fluid page-header py-5">*/}
-            {/*    <div className="container text-center py-5">*/}
-            {/*        /!*<h1 className="display-2 text-white mb-4 animated slideInDown">About</h1>*!/*/}
-            {/*        <nav aria-label="breadcrumb">*/}
-            {/*            <ol className="breadcrumb justify-content-center mb-0 animated slideInDown">*/}
-            {/*                <li className="breadcrumb-item"><a href="/">Trang chủ</a></li>*/}
-            {/*                <li className="breadcrumb-item text-white" aria-current="page">Đặt lịch</li>*/}
-            {/*            </ol>*/}
-            {/*        </nav>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
 
             <div>
                 <nav >
                     <ol className="breadcrumb mb-0 animated slideInDown" style={{fontSize:'20px',marginLeft:'112px',marginTop:'50px'}}>
                         <li className="breadcrumb-item" ><a href="/">Trang chủ</a></li>
-                        <li className="breadcrumb-item " aria-current="page" style={{color:'#ffff00'}}>Đặt lịch</li>
+                        <li className="breadcrumb-item " aria-current="page" style={{color: 'green'}}>Đặt lịch</li>
                         <li className="breadcrumb-item " aria-current="page">Bước {currentForm}</li>
 
                     </ol>
@@ -363,7 +361,7 @@ const Booking = () => {
                 <div className="container py-3">
                     <div className="bg-light px-4 py-3 rounded">
                         <div className="text-center">
-                            <h1 className="display-5 mb-5">Find Your Pest Control Services</h1>
+                            <h1 className="display-5 mb-5">Chọn dịch vụ</h1>
                         </div>
 
                         {/*form-1*/}
@@ -394,7 +392,7 @@ const Booking = () => {
                                     <tbody>
                                     {listJob.map(job => (<tr key={job.id}>
                                         <td>{job.name}</td>
-                                        <td className="text-end px-5">{job.price}</td>
+                                        <td className="text-end px-5">{formatMoney(job.price)}</td>
                                         <td className="text-end px-5">~{job.timeApprox} phút
                                             /{job.type === "Quantity" ? "1 cái" : "m2"}</td>
                                         <td className="d-flex align-items-center justify-content-center">
@@ -408,7 +406,7 @@ const Booking = () => {
                                                 className="form-control ms-2 form-control form-control-sm w-25"
                                                 type="number"
 
-                                                value={job.type === "Quantity" ? job.quantity || 1 : job.houseSize || 1}
+                                                value={getAmount(job) || 1}
                                                 onInput={(event) => handleInput(event, job)}
                                                 disabled={!job.checked}
                                             />
@@ -536,7 +534,7 @@ const Booking = () => {
                                         <div className="form-check" style={{marginLeft: '50px'}}>
                                             <input type="checkbox" className="form-check-input"
                                                    style={{marginTop: '10px'}} id="terms"
-                                                   checked={isConfirmPolicy !== false}
+                                                   checked={isConfirmPolicy} //==> false
                                                    onChange={() => setIsConfirmPolicy(prevState => !prevState)}/>
                                             <label htmlFor="terms" className="form-check-label"
                                                    style={{fontSize: 'smaller'}}>

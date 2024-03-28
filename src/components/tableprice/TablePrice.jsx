@@ -69,19 +69,9 @@ const TablePrice = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-<<<<<<< HEAD
-                                {jobs.map((job, index) => (
-                                    <tr key={index} className="align-middle">
-                                        <td>
-                                            <div className="form-check d-flex justify-content-center align-items-center">
-                                                <input className="form-check-input" type="checkbox" value=""/>
-                                            </div>
-                                        </td>
-=======
                                 {job.map((job, index) => (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
->>>>>>> c965edefe9e1cbc3ae6972372eda4d3b63d65051
                                         <td><img src={job.urlImage} height='40px' width='40px' alt="domestichelp"/></td>
                                         <td className="text-start">{job.name}</td>
                                         <td className="text-end">{job.price}</td>
