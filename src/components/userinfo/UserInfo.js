@@ -119,12 +119,14 @@ const UserInfo = () => {
                             </div>
                             <div className="col-md-9">
                                 <div className="input-group input-group-merge">
-                    <span id="basic-icon-default-fullname2" className="input-group-text">
-                        <i className="fa fa-user"></i>
-                    </span>
+                                    <span id="basic-icon-default-fullname2" className="input-group-text">
+                                        <i className="fa fa-user"></i>
+                                    </span>
                                     <input
                                         type="text"
                                         className="form-control"
+
+
                                     />
                                 </div>
                             </div>
@@ -142,16 +144,9 @@ const UserInfo = () => {
                                         id="basic-icon-default-address"
                                         className="form-control"
 
-                                        value={user.address}
-                                        onChange={handleInputChange}
-                                        // disabled={true}
 
                                     />
-                                    <span
-                                        id="basic-icon-default-address"
-                                        className="input-group-text"
-                                        style={{cursor: 'pointer', color: '#000', background: '#FDF000'}}
-                                    >Change</span>
+
                                 </div>
                             </div>
                         </div>
@@ -168,12 +163,9 @@ const UserInfo = () => {
                                         id="basic-icon-default-email"
                                         className="form-control"
 
-                                        value={user.email}
-                                        onChange={handleInputChange}
-                                        // disabled={true}
+
 
                                     />
-                                    {/*<span id="basic-icon-default-email2" className="input-group-text">@gmail.com</span>*/}
                                 </div>
                             </div>
                         </div>
@@ -192,10 +184,7 @@ const UserInfo = () => {
                                         id="basic-icon-default-phone"
                                         className="form-control phone-mask"
 
-                                        value={user.phone}
-                                        onChange={handleInputChange}
 
-                                        // disabled={true}
 
                                     />
                                 </div>
@@ -216,9 +205,6 @@ const UserInfo = () => {
                                         id="basic-icon-default-phone"
                                         className="form-control phone-mask"
 
-                                        value={user.dob}
-                                        onChange={handleInputChange}
-                                        // disabled={true}
 
                                     />
                                 </div>
@@ -237,8 +223,8 @@ const UserInfo = () => {
                                         id="basic-icon-default-phone"
                                         className="form-control phone-mask"
 
-                                        value={user.gender}
-                                        onChange={handleInputChange}
+                                        // value={user.gender}
+                                        // onChange={handleInputChange}
                                         // disabled={true}
 
                                     />
