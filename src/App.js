@@ -1,6 +1,6 @@
 import Home from "./Home";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Suspense, useState} from "react";
+import {Suspense, useEffect, useState} from "react";
 import Booking from "./components/booking/Booking";
 
 import Login from "./components/auth/Login";
