@@ -1,10 +1,15 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {fetchRegister} from "../../service/Register.";
+import {fetchRegister} from "../../service/AuthService";
 import * as yup from "yup";
 import './Auth.css'
+import {date} from "yup";
+import toastr from "toastr";
+import LoadingModal from "../loading/LoadingModal";
+
+
 
 const schema = yup.object({
     typeUser: yup.string().required("Yêu cầu chọn kiểu tài khoản"),
@@ -27,7 +32,7 @@ const schema = yup.object({
         .max(11, "SĐT không được vượt quá 11 số"),
     dob: yup.date()
         .required("Yêu cầu nhập ngày sinh")
-        .max(new Date(), "Ngày phải nhỏ hơn ngày hiện tại"),
+        .max(new Date(), "Ngày phải nhỏ hơn ngày hiện tại").typeError("Vui lòng chọn ngày"),
     username: yup.string().required("Yêu cầu nhập tài khoản")
         .min(6, "Tài khoản ít nhất 4 ký tự")
         .max(20, "Tài khoản không được vượt quá 16 ký tự")
@@ -35,49 +40,62 @@ const schema = yup.object({
     password: yup.string().required("Yêu cầu nhập mật khẩu")
         .min(6, "Mật khẩu ít nhất 6 kí tự"),
     confirmPassword: yup.string().required("Yêu cầu xác nhận mật khẩu")
-        .oneOf([yup.ref("password")], "Mật khẩu không khớp")
+        .oneOf([yup.ref("password")], "Mật khẩu không khớp"),
+    gender: yup.string().required("Vui lòng chọn giới tính"),
 })
 
 const RegisterForm = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [typeUser, setTypeUser] = useState('CUSTOMER');
+    const [shift, setShift] = useState("SHIFT_1")
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
     const {
         register,
         handleSubmit,
         formState: {errors},
-        resetField
+        reset
     } = useForm({
         resolver: yupResolver(schema)
     })
 
     const handleFileChange = (event) => {
-        setSelectedFile(event.target.files[0]);
+        const file = event.target.files[0]
+        setSelectedFile(file);
     };
 
-
-    async function handleCreateAccount(data, e) {
+    const handleCreateAccount = async (data, e) => {
         e.preventDefault();
+        setLoading(true); // Bắt đầu hiển thị loading khi bắt đầu xử lý
         const date = new Date("Wed Aug 29 1973 00:00:00 GMT+0800");
         data.dob = date.toISOString().split('T')[0];
         const form = new FormData();
         for (const key in data) {
-            if (key === 'avatar') continue
+            if (key === 'avatar' || key === 'shift') continue
             form.append(key, data[key])
         }
+        form.append("shift", shift)
         form.append('avatar', selectedFile)
 
-        const response = await fetchRegister(form)
-        if (response) {
-            setIsShowConfirmPassword(false);
-            setIsShowPassword(false);
+        try {
+            const response = await fetchRegister(form);
+            console.log(response);
+            navigate("/auth?mode=register");
+            toastr.success("Register successfully");
+            reset();
+        } catch (error) {
+            toastr.error(error.message); // Hiển thị thông báo lỗi từ máy chủ
+        } finally {
+            setLoading(false); // Tắt trạng thái loading sau khi xử lý hoàn tất (bất kể thành công hay thất bại)
         }
     }
 
+
     return (
-        <div className='col-lg-7 text-white mb-4'>
+        <div className='col-lg-7 mb-4'>
+
             <div className='row align-items-center justify-content-center h-100 g-0 px-4 px-sm-0'>
                 <div className='col col-sm-6 col-lg-7 col-xl-10'>
                     <Link to={"/"} className="d-flex justify-content-center mb-4">
@@ -96,29 +114,102 @@ const RegisterForm = () => {
                     </div>
 
                     <form onSubmit={handleSubmit(handleCreateAccount)} className="needs-validation">
-                        <div className="mb-2 row d-flex align-items-center">
+                        <div className="mb-3 row d-flex align-items-center">
                             <div className="col-lg-8 form-group has-validation">
                                 <label className="ms-2 mb-2 title-input">Bạn đăng ký với tư cách</label>
                                 <select
-                                    className={`form-select ${errors.typeUser ? 'is-invalid' : ''}`} {...register("typeUser")}
+                                    className={`form-select ${errors.typeUser ? 'is-invalid' : ''}`}
+                                    {...register("typeUser")}
                                     onChange={(e) => setTypeUser(e.target.value)}>
                                     <option value="CUSTOMER" selected>Người thuê</option>
                                     <option value="EMPLOYEE">Người làm việc</option>
                                 </select>
                                 <span className="text-danger">{errors.typeUser?.message}</span>
                             </div>
-
-                            <div className="col-lg-3 form-group has-validation">
-                                <label className="ms-2 mb-2 title-input">Ca làm việc</label>
-                                <select
-                                    className={`form-select`}>
-                                    <option value="SHIFT_1" selected>Ca 1</option>
-                                    <option value="SHIFT_2" selected>Ca 2</option>
-                                    <option value="SHIFT_3" selected>Ca 3</option>
-                                    <option value="SHIFT_4" selected>Ca 4</option>
-
-                                </select>
-                                <span className="text-danger">{errors.typeUser?.message}</span>
+                            <div className="col-lg-4 form-group has-validation">
+                                <label className="ms-1 mb-2 title-input">Avatar</label>
+                                <input
+                                    type="file"
+                                    className="form-control"
+                                    accept="image/*" // Chỉ chấp nhận file ảnh
+                                    onChange={handleFileChange}
+                                />
+                                {selectedFile != null && (
+                                    <img className={"w-50"} style={{marginTop: 12, marginLeft: 40}} src={URL.createObjectURL(selectedFile)} alt={"avatar"} />
+                                )}
+                            </div>
+                        </div>
+                        <div className="mb-2 row d-flex align-items-center">
+                            <div className="col-lg-12"
+                                 style={{display: typeUser === 'EMPLOYEE' ? 'block' : 'none'}}>
+                                <div className="d-flex form-group has-validation">
+                                    <label className="ms-1 title-input me-2">Ca làm việc</label>
+                                    <div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="shift_1"
+                                                name="optionsShift"
+                                                value="SHIFT_1"
+                                                checked={shift === "SHIFT_1"}
+                                                onChange={(e) => setShift(e.target.value)}
+                                            />
+                                            <label className="form-check-label" htmlFor="shift_1">CA 1</label>
+                                        </div>
+                                        <div>
+                                            <small>(0h - 8h)</small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="shift_2"
+                                                {...register("shift", {required: true})}
+                                                name="optionsShift"
+                                                value="SHIFT_2"
+                                                onChange={(e) => setShift(e.target.value)}
+                                            />
+                                            <label className="form-check-label" htmlFor="shift_2">CA 2</label>
+                                        </div>
+                                        <div>
+                                            <small>(8h - 16h)</small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="shift_3"
+                                                {...register("shift", {required: true})}
+                                                name="optionsShift"
+                                                value="SHIFT_3"
+                                                onChange={(e) => setShift(e.target.value)}
+                                            />
+                                            <label className="form-check-label" htmlFor="shift_3">CA 3</label>
+                                        </div>
+                                        <div>
+                                            <small>(16h - 24h)</small>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                id="shift_4"
+                                                {...register("shift", {required: true})}
+                                                name="optionsShift"
+                                                onChange={(e) => setShift(e.target.value)}
+                                                value="SHIFT_4"
+                                            />
+                                            <label className="form-check-label" htmlFor="shift_1">TOÀN THỜI GIAN</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -139,30 +230,32 @@ const RegisterForm = () => {
                                         <input
                                             className="form-check-input"
                                             type="radio"
-                                            {...register("gender")}
-                                            name="optionsGender"
+                                            {...register("gender", {required: true})}
+                                            id="maleGender"
                                             value="MALE"
+                                        />
+                                        <label className="form-check-label" htmlFor="maleGender">Nam</label>
+                                    </div>
 
+                                    <div className="form-check form-check-inline">
+                                        <input
+                                            className="form-check-input"
+                                            type="radio"
+                                            {...register("gender", {required: true})}
+                                            id="femaleGender"
+                                            value="FEMALE"
                                         />
-                                        <label className="form-check-label">Nam</label>
+                                        <label className="form-check-label" htmlFor="femaleGender">Nữ</label>
                                     </div>
                                     <div className="form-check form-check-inline">
                                         <input
                                             className="form-check-input"
                                             type="radio"
-                                            {...register("gender")}
-                                            name="optionsGender" value="FEMALE"/>
-                                        <label className="form-check-label">Nữ</label>
-                                    </div>
-                                    <div className="form-check form-check-inline">
-                                        <input
-                                            className="form-check-input"
-                                            type="radio"
-                                            {...register("gender")}
-                                            name="optionsGender" value="OTHER"
-                                            defaultChecked={true}
+                                            {...register("gender", {required: true})}
+                                            id="otherGender"
+                                            value="OTHER"
                                         />
-                                        <label className="form-check-label">Khác</label>
+                                        <label className="form-check-label" htmlFor="otherGender">Khác</label>
                                     </div>
                                 </div>
                                 <span className="invalid-feedback">{errors?.fullName?.message}</span>
@@ -183,9 +276,7 @@ const RegisterForm = () => {
                                 <input type="date"
                                        {...register("dob")}
                                        className={`form-control ${errors?.dob?.message ? "is-invalid" : ""}`}
-                                       min="1950-01-01"
-                                       max="2010-01-01"
-                                       defaultValue="2006-01-01"
+                                       max={date.now}
                                 />
                                 <span className="invalid-feedback">{errors?.dob?.message}</span>
                             </div>
@@ -264,11 +355,13 @@ const RegisterForm = () => {
 
                     </form>
                     <div className="text-center">
-                        <small>Bạn đã có tài khoản? <Link to="/auth?mode=login" className="text-info fw-bold">Đăng
+                        <small className="text-black-50">Bạn đã có tài khoản? <Link to="/auth?mode=login" className="text-info fw-bold">Đăng
                             nhập</Link></small>
                     </div>
                 </div>
             </div>
+            {/* Xử lý hiển thị loading */}
+            <LoadingModal loading={loading} />
         </div>
     )
 }

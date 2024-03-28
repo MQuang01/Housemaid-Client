@@ -22,7 +22,6 @@ function App() {
                             <Route path='/booking' element={<Booking />} />
                             <Route path='/userinfo' element={<UserInfo />} />
                             <Route path='/orderconfirm' element={<OrderConfirm />} />
-
                         </Routes>
                     </Suspense>
                 </AuthProvider>

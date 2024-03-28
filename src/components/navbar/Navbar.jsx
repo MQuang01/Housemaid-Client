@@ -6,7 +6,7 @@ import {accessToken} from "../../service/AuthService";
 
 const Navbar = () => {
     const { isLoggedIn, logout } = useAuth();
-    const { decodedToken: dataUser } = useJwt(accessToken);
+    const { decodedToken: dataUser } = useJwt(sessionStorage.getItem('user') || null);
 
     return(
         <>
@@ -52,8 +52,15 @@ const Navbar = () => {
                     <div className="collapse navbar-collapse me-n3" id="navbarCollapse">
                         <div className="navbar-nav ms-auto d-flex align-items-center">
                             <a href="/" className="nav-item nav-link active">Trang chủ</a>
-                            <a href="#table-price" className="nav-item nav-link">Bảng giá</a>
+                            <a href="about.html" className="nav-item nav-link">Thông tin</a>
                             <a href="#service-list" className="nav-item nav-link">Dịch vụ</a>
+                            <div className="nav-item dropdown">
+                                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Mục lục</a>
+                                <div className="dropdown-menu m-0 bg-primary">
+                                    <a href="#table-price" className="dropdown-item">Bảng giá</a>
+                                    <a href="testimonial.html" className="dropdown-item">Testimonial</a>
+                                </div>
+                            </div>
                             <a href="contact.html" className="nav-item nav-link">Liên hệ</a>
                             {isLoggedIn ? (
                                 <div className="nav-item dropdown" title={dataUser?.fullName}>

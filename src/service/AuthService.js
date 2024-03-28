@@ -18,3 +18,16 @@ export const Login = async (username, password) => {
 export const Logout = () => {
     sessionStorage.removeItem("user");
 }
+
+export const fetchRegister = async (formData) => {
+    try {
+        const response = await axios.post(`${InforUrl}/auths/register`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response.data); // Ném ra một Error với thông báo lỗi từ máy chủ
+    }
+}

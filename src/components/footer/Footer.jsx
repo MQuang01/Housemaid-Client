@@ -17,7 +17,6 @@ const Footer =() => {
                         <div className="footer-item">
                             <h4 className="text-white fw-bold mb-4">Về chúng tôi</h4>
                             <div className="d-flex flex-column align-items-start">
-                                {/*<a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Về chúng tôi</a>*/}
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Liên hệ chúng tôi</a>
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Dịch vụ</a>
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Điều khoản & Điều kiện</a>
@@ -31,7 +30,6 @@ const Footer =() => {
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Dọn căn hộ</a>
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Dọn văn phòng</a>
                                 <a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Rửa xe</a>
-                                {/*<a className="btn btn-link ps-0" href=""><i className="fa fa-check me-2"></i>Green Cleaning</a>*/}
                             </div>
                             
                         </div>
@@ -46,10 +44,7 @@ const Footer =() => {
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> c965edefe9e1cbc3ae6972372eda4d3b63d65051
         </div>
     )
 }

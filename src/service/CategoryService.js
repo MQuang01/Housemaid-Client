@@ -6,6 +6,6 @@ export const fetchCategory = async () => {
         const response = await axios.get(`${InforUrl}/categories`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching data: ', error);
+        throw new Error(error.response.data)
     }
 };
