@@ -54,8 +54,7 @@ const Footer =() => {
                     </div>
                 </div>
             </div>
-            <a href="#" className="btn btn-primary rounded-circle border-3 back-to-top"><i
-                className="fa fa-arrow-up"></i></a>
+
         </div>
 
     )

@@ -1,16 +1,7 @@
-import React, {useEffect, useState} from 'react'
-import axios from "axios";
-import toastr from "toastr";
+import React from 'react'
+import {Carousel} from "./Carousel";
 
 const Slide = () => {
-    const [toastContent, setToastContent] = useState("");
-
-    useEffect(() => {
-        if (toastContent) {
-            toastr.success(toastContent);
-            setToastContent("");
-        }
-    })
 
     return (
       <div className="container-fluid carousel px-0 pb-5">
@@ -24,103 +15,86 @@ const Slide = () => {
 
               </ol>
               <div className="carousel-inner" role="listbox">
-                  <div className="carousel-item active" >
-                      <img src={"/assets/img/carousel-1.jpg"} className="img-fluid w-100" alt="First slide" />
-                      <div className="carousel-caption">
-                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
-                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
-                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
-                              <ul style={{fontSize:'20px'}}>
-                                  <li>Cam kết giá tốt nhất</li>
-                                  <li>Chất lượng hàng đầu</li>
-                                  <li>Chiết khấu hấp dẫn</li>
-                                  <li>Chăm sóc khách hàng 5 sao</li>
-                                  <li>Công nghệ vệ sinh tốt nhất</li>
 
-                              </ul>
-                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="carousel-item">
-                      <img src={"/assets/img/carousel-2.jpg"} className="img-fluid w-100" alt="Second slide"/>
-                      <div className="carousel-caption">
-                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
-                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
-                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
-                              <ul style={{fontSize:'20px'}}>
-                                  <li>Cam kết giá tốt nhất</li>
-                                  <li>Chất lượng hàng đầu</li>
-                                  <li>Chiết khấu hấp dẫn</li>
-                                  <li>Chăm sóc khách hàng 5 sao</li>
-                                  <li>Công nghệ vệ sinh tốt nhất</li>
-
-                              </ul>
-                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="carousel-item">
-                      <img src={"/assets/img/carousel-3.jpg"} className="img-fluid w-100" alt="Third slide"/>
-                      <div className="carousel-caption">
-                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
-                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
-                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
-                              <ul style={{fontSize:'20px'}}>
-                                  <li>Cam kết giá tốt nhất</li>
-                                  <li>Chất lượng hàng đầu</li>
-                                  <li>Chiết khấu hấp dẫn</li>
-                                  <li>Chăm sóc khách hàng 5 sao</li>
-                                  <li>Công nghệ vệ sinh tốt nhất</li>
-
-                              </ul>
-                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="carousel-item">
-                      <img src={"/assets/img/carousel-4.jpg"} className="img-fluid w-100" alt="Fourth slide"/>
-                      <div className="carousel-caption">
-                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
-                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
-                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
-                              <ul style={{fontSize:'20px'}}>
-                                  <li>Cam kết giá tốt nhất</li>
-                                  <li>Chất lượng hàng đầu</li>
-                                  <li>Chiết khấu hấp dẫn</li>
-                                  <li>Chăm sóc khách hàng 5 sao</li>
-                                  <li>Công nghệ vệ sinh tốt nhất</li>
-
-                              </ul>
-                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="carousel-item">
-                      <img src={"/assets/img/carousel-5.jpg"} className="img-fluid w-100" alt="Fifth slide"/>
-                      <div className="carousel-caption">
-                          <div className="container carousel-content" style={{marginTop:"-100px"}}>
-                              <h4 className="text-white mb-4 animated slideInDown">Vì một ngôi nhà sạch đẹp</h4>
-                              <h5 className="text-white display-1 mb-4 animated slideInDown">Dịch vụ vệ sinh nhà ở mới giá rẻ 2024</h5>
-                              <ul style={{fontSize:'20px'}}>
-                                  <li>Cam kết giá tốt nhất</li>
-                                  <li>Chất lượng hàng đầu</li>
-                                  <li>Chiết khấu hấp dẫn</li>
-                                  <li>Chăm sóc khách hàng 5 sao</li>
-                                  <li>Công nghệ vệ sinh tốt nhất</li>
-
-                              </ul>
-                              <a href="#service-list" className="me-2"><button type="button" className="px-5 py-3 btn btn-primary border-2 rounded-pill animated slideInDown" onClick={() => setToastContent("Hãy thử chọn dịch vụ!")}>Đặt dịch vụ</button></a>
-                          </div>
-                      </div>
-                  </div>
+                  <Carousel active="active" urlImage="/assets/img/carousel-1.jpg"
+                            title1="Thuởng thức"
+                            title2="Một ngôi nhà sạch sẽ, một cách dễ dàng"
+                            title3="Với dịch vụ giúp việc bán thời gian của chúng tôi"
+                            {...{
+                                listHighlight: [
+                                    "Dịch vụ giúp việc bán thời gian chuyên nghiệp và kinh nghiệm",
+                                    "Dịch vụ vệ sinh nhanh chóng và hiệu quả",
+                                    "Không có phí ẩn",
+                                    "Dịch vụ vệ sinh một lần và định kỳ điều có sẵn",
+                                    "Đảm bảo 100% sự hài lòng"
+                                ]
+                            }}
+                  />
+                  <Carousel urlImage="/assets/img/carousel-2.jpg"
+                            title1="Tận hưởng"
+                            title2="Một ngôi nhà sạch sẽ, một cách dễ dàng"
+                            title3="Với dịch vụ giúp việc bán thời gian của chúng tôi"
+                            {...{
+                                listHighlight: [
+                                    "Dịch vụ giúp việc bán thời gian chuyên nghiệp và kinh nghiệm",
+                                    "Dịch vụ vệ sinh nhanh chóng và hiệu quả",
+                                    "Không có phí ẩn",
+                                    "Dịch vụ vệ sinh một lần và định kỳ điều có sẵn",
+                                    "Đảm bảo 100% sự hài lòng"
+                                ]
+                            }}
+                  />
+                  <Carousel urlImage="/assets/img/carousel-3.jpg"
+                            title1="Trải nghiệm"
+                            title2="Một ngôi nhà sạch sẽ, một cách dễ dàng"
+                            title3="Với dịch vụ giúp việc bán thời gian của chúng tôi"
+                            {...{
+                                listHighlight: [
+                                    "Dịch vụ giúp việc bán thời gian chuyên nghiệp và kinh nghiệm",
+                                    "Dịch vụ vệ sinh nhanh chóng và hiệu quả",
+                                    "Không có phí ẩn",
+                                    "Dịch vụ vệ sinh một lần và định kỳ điều có sẵn",
+                                    "Đảm bảo 100% sự hài lòng"
+                                ]
+                            }}
+                  />
+                  <Carousel urlImage="/assets/img/carousel-4.jpg"
+                            title1="Chiêm ngưỡng"
+                            title2="Một ngôi nhà sạch sẽ, một cách dễ dàng"
+                            title3="Với dịch vụ giúp việc bán thời gian của chúng tôi"
+                            {...{
+                                listHighlight: [
+                                    "Dịch vụ giúp việc bán thời gian chuyên nghiệp và kinh nghiệm",
+                                    "Dịch vụ vệ sinh nhanh chóng và hiệu quả",
+                                    "Không có phí ẩn",
+                                    "Dịch vụ vệ sinh một lần và định kỳ điều có sẵn",
+                                    "Đảm bảo 100% sự hài lòng"
+                                ]
+                            }}
+                  />
+                  <Carousel urlImage="/assets/img/carousel-5.jpg"
+                            title1="Sưởi ấm"
+                            title2="Một ngôi nhà sạch sẽ, một cách dễ dàng"
+                            title3="Với dịch vụ giúp việc bán thời gian của chúng tôi"
+                            {...{
+                                listHighlight: [
+                                    "Dịch vụ giúp việc bán thời gian chuyên nghiệp và kinh nghiệm",
+                                    "Dịch vụ vệ sinh nhanh chóng và hiệu quả",
+                                    "Không có phí ẩn",
+                                    "Dịch vụ vệ sinh một lần và định kỳ điều có sẵn",
+                                    "Đảm bảo 100% sự hài lòng"
+                                ]
+                            }}
+                  />
 
               </div>
-              <button className="carousel-control-prev btn btn-primary border border-2 border-start-0 border-primary" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+              <button className="carousel-control-prev btn btn-primary border border-2 border-start-0 border-primary"
+                      type="button" data-bs-target="#carouselId" data-bs-slide="prev">
                   <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Previous</span>
               </button>
-              <button className="carousel-control-next btn btn-primary border border-2 border-end-0 border-primary" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+              <button className="carousel-control-next btn btn-primary border border-2 border-end-0 border-primary"
+                      type="button" data-bs-target="#carouselId" data-bs-slide="next">
                   <span className="carousel-control-next-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
               </button>
@@ -128,7 +102,7 @@ const Slide = () => {
 
       </div>
 
-  )
+    )
 }
 
 export default Slide;

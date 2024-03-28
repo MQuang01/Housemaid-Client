@@ -18,9 +18,17 @@ const Auth = () => {
     const [mode, setMode] = useState('');
 
     useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const modeParam = searchParams.get('mode');
-        setMode(modeParam);
+        if (location && location.search) {
+            const searchParams = new URLSearchParams(location.search);
+            const modeParam = searchParams.get('mode');
+
+            const isAuthModeLogin = /auth\?mode=login/.test(location.search);
+
+            if (!isAuthModeLogin) {
+                setMode(modeParam);
+            }
+        }
+
     }, [location.search]);
 
 
