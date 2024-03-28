@@ -1,5 +1,5 @@
 import React from "react";
-import {fetchJobs} from "../../service/JobService";
+import {fetchJobsPaging} from "../../service/JobService";
 
 
 const Pagination = ({dataPage, setDataPage}) => {
