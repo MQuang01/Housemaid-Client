@@ -6,6 +6,7 @@ import {AuthProvider} from "./context/AuthContext";
 import Home from "./screens/Home";
 
 import UserInfo from "./components/userinfo/UserInfo";
+import OrderConfirm from "./components/orderconfirm/OrderConfirm";
 
 
 function App() {
@@ -16,14 +17,16 @@ function App() {
                 <AuthProvider>
                     <Suspense>
                         <Routes>
-                            <Route path='/auth' element={<Auth/>}/>
-                            <Route path='/' element={<Home/>}/>
-                            <Route path='/booking' element={<Booking/>}/>
-                            <Route path='/userinfo' element={<UserInfo/>}/>
+                            <Route path='/auth' element={<Auth />} />
+                            <Route path='/' element={<Home/>} />
+                            <Route path='/booking' element={<Booking />} />
+                            <Route path='/userinfo' element={<UserInfo />} />
+                            <Route path='/orderconfirm' element={<OrderConfirm />} />
+
                         </Routes>
                     </Suspense>
                 </AuthProvider>
-            </BrowserRouter>
+            </BrowserRouter >
         </>
     )
 }
