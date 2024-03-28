@@ -1,8 +1,6 @@
-import {Link, useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CalculateRatingStarts from "./CalculateRatingStarts";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import {InforUrl} from "../../until/InforUrl";
 import {fetchCategory} from "../../service/CategoryService";
 
 const Category = () => {

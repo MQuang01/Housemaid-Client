@@ -50,7 +50,7 @@ const Auth = () => {
                         <div className='bg-holder' style={{backgroundImage: `url("/assets/img/register.jpg")`}}>
                         </div>
                     </div>
-                    <RegisterForm/>
+                    <RegisterForm />
                 </>
             )}
         </div>

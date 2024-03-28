@@ -3,9 +3,10 @@ import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import { Login } from "../../service/AuthService";
 import * as yup from "yup";
-import React from "react";
+import React, {useState} from "react";
 import {useAuth} from "../../context/AuthContext";
 import toastr from "toastr";
+import LoadingModal from "../loading/LoadingModal";
 
 const schema = yup.object({
     username: yup.string().required("Please enter username"),
@@ -13,6 +14,8 @@ const schema = yup.object({
 })
 const LoginForm = () => {
     let navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -23,17 +26,26 @@ const LoginForm = () => {
     })
     const { login } = useAuth();
     const handleLogin = async (data, e) => {
-        // register("username", data.username)
-        e.preventDefault()
-        if(data.username && data.password) {
-            if(await Login(data.username, data.password)) {
+        e.preventDefault();
+        setLoading(true); // Bắt đầu hiển thị loading khi bắt đầu xử lý
+
+        try {
+            const loggedIn = await Login(data.username, data.password);
+            if (loggedIn) {
                 login();
                 navigate("/");
             } else {
                 toastr.error("Tên tài khoản hoặc mật khẩu bị sai");
             }
+        } catch (error) {
+            toastr.error("Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại sau.");
+            console.error("Error logging in:", error);
+        } finally {
+            setLoading(false); // Tắt trạng thái loading sau khi xử lý hoàn tất (bất kể thành công hay thất bại)
         }
-    }
+
+    };
+
     return (
         <div className='col-lg-6'>
             <div className='row align-items-center justify-content-center h-100 g-0 px-4 px-sm-0'>
@@ -115,6 +127,8 @@ const LoginForm = () => {
                     </div>
                 </div>
             </div>
+            {/* Xử lý hiển thị loading */}
+            <LoadingModal loading={loading} />
         </div>
     )
 }
