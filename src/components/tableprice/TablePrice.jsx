@@ -68,7 +68,7 @@ const TablePrice = () => {
                                             <select className="w-25 ms-xl-4 form-select form-select-lg">
                                                 <option defaultValue="">Tất cả công việc</option>
                                                 {categories.map((category, index) => {
-                                                    return <option key={category.name} defaultValue={category.id}>{category.name}</option>
+                                                    return <option key={category.name}>{category.name}</option>
                                                 })}
                                             </select>
                                         </th>

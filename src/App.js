@@ -1,5 +1,5 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {Suspense} from "react";
+import {Suspense, useEffect, useState} from "react";
 import Booking from "./components/booking/Booking";
 import Auth from "./components/auth/Auth";
 import {AuthProvider} from "./context/AuthContext";

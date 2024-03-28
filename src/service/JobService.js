@@ -14,7 +14,7 @@ export const fetchJobsByCategoryId = async (id) => {
         const response = await axios.get(`${InforUrl}/jobs/category/${id}`);
         return response.data;
     } catch (error) {
-        throw new Error(error.response.data)
+        return throw new Error(error.response.data)
     }
 }
 export const fetchJobById = async (id) => {
