@@ -1,21 +1,18 @@
 import axios from "axios";
-import toastr from "toastr";
+import {InforUrl} from "../until/InforUrl";
 
 export const accessToken = sessionStorage.getItem("user");
 export const Login = async (username, password) => {
     try {
         const response = await axios.post(
-            "http://localhost:8080/api/auths/login", {
+            `${InforUrl}/auths/login`, {
                 username: username,
                 password: password,
             });
-        toastr.success("Đăng nhập thành công");
         sessionStorage.setItem("user", response.data);
-        console.log(accessToken);
-        return true; // Trả về true để biểu thị đăng nhập thành công
+        return true;
     } catch (error) {
-        toastr.error("Tên tài khoản hoặc mật khẩu bị sai");
-        return false; // Trả về false để biểu thị đăng nhập thất bại
+        return false;
     }
 }
 export const Logout = () => {

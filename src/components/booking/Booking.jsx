@@ -14,8 +14,6 @@ import {
 } from "../../until/FormatTime";
 import {AMOUNT_TYPE, compareTime} from "../../until/app-constant";
 import {fetchListEmployee} from "../../service/EmployeeService";
-// import deepMerge from "react-hook-form/dist/utils/deepMerge";
-
 
 // listjob khi list job thay đổi thì mình cập nhật state listjob thứ 2 là cập nhật ở localstorage
 // listJob không call api lấy ở localstorage
@@ -152,17 +150,6 @@ const Booking = () => {
         const timeStart = formatHHMMSinceMidnightToMinutes(startTime);
         const timeEnd = timeStart + formatHHMMSinceMidnightToMinutes(totalTime);
 
-
-        // Kiểm tra và điều chỉnh giờ và phút nếu cần
-        let endHour = Math.floor(timeEnd / 60);
-        let endMinute = timeEnd % 60;
-
-        // Kiểm tra và điều chỉnh giờ và phút nếu cần
-        if (endMinute >= 60) {
-            endHour += Math.floor(endMinute / 60);
-            endMinute %= 60;
-        }
-
         let formattedEndHour = endHour.toString().padStart(2, '0');
         let formattedEndMinute = endMinute.toString().padStart(2, '0');
 
@@ -204,6 +191,7 @@ const Booking = () => {
         const formattedTimeStart = `${selectedHour}:${selectedMinutes}`;
 
         const endTime = calculateEndTime(formattedTimeStart, formatMinutesToHHMM(timeApprox));
+
 
         setSelectedTime({start: formattedTimeStart, end: endTime});
 
@@ -252,6 +240,7 @@ const Booking = () => {
         localStorage.setItem("confirmPolicy", JSON.stringify(isConfirmPolicy));
     }, [isConfirmPolicy]);
 
+    
 
     const handleNextForm = () => {
 
@@ -346,11 +335,35 @@ const Booking = () => {
     return (
         <>
             <Navbar/>
+
+            {/*<div className="container-fluid page-header py-5">*/}
+            {/*    <div className="container text-center py-5">*/}
+            {/*        /!*<h1 className="display-2 text-white mb-4 animated slideInDown">About</h1>*!/*/}
+            {/*        <nav aria-label="breadcrumb">*/}
+            {/*            <ol className="breadcrumb justify-content-center mb-0 animated slideInDown">*/}
+            {/*                <li className="breadcrumb-item"><a href="/">Trang chủ</a></li>*/}
+            {/*                <li className="breadcrumb-item text-white" aria-current="page">Đặt lịch</li>*/}
+            {/*            </ol>*/}
+            {/*        </nav>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+
+            <div>
+                <nav >
+                    <ol className="breadcrumb mb-0 animated slideInDown" style={{fontSize:'20px',marginLeft:'112px',marginTop:'50px'}}>
+                        <li className="breadcrumb-item" ><a href="/">Trang chủ</a></li>
+                        <li className="breadcrumb-item " aria-current="page" style={{color:'#ffff00'}}>Đặt lịch</li>
+                        <li className="breadcrumb-item " aria-current="page">Bước {currentForm}</li>
+
+                    </ol>
+                </nav>
+            </div>
+
             <div className="container-fluid py-3 wow fadeInUp" data-wow-delay=".3s">
                 <div className="container py-3">
                     <div className="bg-light px-4 py-3 rounded">
                         <div className="text-center">
-                            <h1 className="display-5 mb-5">Chọn công việc bạn muốn thực hiện</h1>
+                            <h1 className="display-5 mb-5">Find Your Pest Control Services</h1>
                         </div>
 
                         {/*form-1*/}
@@ -435,6 +448,7 @@ const Booking = () => {
                                       boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
                                       padding: '20px'
                                   }}>
+
                                 <div className="text-left row g-4 ">
                                     <div className="col-md-6">
                                         <button type="button"
@@ -483,6 +497,7 @@ const Booking = () => {
                                                 * Lưu ý: Ý kiến tham khảo mang tính chất hỗ trợ vệ sinh nhà hoặc căn hộ
                                             </label>
                                         </div>}
+
                                     </div>
                                 </div>
                                 <div className="row g-2 mt-3">
@@ -559,6 +574,7 @@ const Booking = () => {
                                         <button type="button"
                                                 className="btn btn-primary border-0 rounded-pill px-4 py-3"
                                                 onClick={handleNextForm}>Tiếp theo
+
                                         </button>
                                     </div>
                                 </div>

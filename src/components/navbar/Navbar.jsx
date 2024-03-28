@@ -1,20 +1,12 @@
-import React, {useState} from 'react'
-import {useNavigate} from "react-router-dom";
+import React from 'react'
+import { Link } from "react-router-dom";
+import {useAuth} from "../../context/AuthContext";
+import {useJwt} from "react-jwt";
+import {accessToken} from "../../service/AuthService";
 
 const Navbar = () => {
-    const nav = useNavigate();
-    const [jwt, setJwt] = useState(localStorage.getItem("jwt"))
-
-    const handleLogout = () => {
-        localStorage.removeItem("jwt")
-        setJwt(null)
-        nav("/login")
-    }
-
-    const handleLogin = () => {
-        nav("/login")
-    }
-
+    const { isLoggedIn, logout } = useAuth();
+    const { decodedToken: dataUser } = useJwt(accessToken);
 
     return(
         <>
@@ -42,10 +34,6 @@ const Navbar = () => {
                         <a href="#" className="me-4"><i className="fab fa-facebook-f text-dark"></i></a>
                         <a href="#" className="me-4"><i className="fab fa-twitter text-dark"></i></a>
                         <a href="#" className="me-4"><i className="fab fa-instagram text-dark"></i></a>
-                        <a className="d-flex me-4 align-items-center" style={{cursor: "pointer"}} onClick={jwt ? handleLogout : handleLogin}>
-                            <i className="fas fa-sign-in-alt text-dark"></i>
-                            <span className="ms-2 text-dark fw-bold">{jwt ? "Đăng xuất" : "Đăng nhập"}</span>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -62,26 +50,36 @@ const Navbar = () => {
                         <span className="fa fa-bars text-dark"></span>
                     </button>
                     <div className="collapse navbar-collapse me-n3" id="navbarCollapse">
-                        <div className="navbar-nav ms-auto">
+                        <div className="navbar-nav ms-auto d-flex align-items-center">
                             <a href="/" className="nav-item nav-link active">Trang chủ</a>
-                            <a href="about.html" className="nav-item nav-link">Thông tin</a>
+                            <a href="#table-price" className="nav-item nav-link">Bảng giá</a>
                             <a href="#service-list" className="nav-item nav-link">Dịch vụ</a>
-                            {/*<a href="project.html" className="nav-item nav-link">Dự án</a>*/}
-                            <div className="nav-item dropdown">
-                                <a href="#" className="nav-link dropdown-toggle" data-bs-toggle="dropdown">Mục lục</a>
-                                <div className="dropdown-menu m-0 bg-primary">
-                                    <a href="#table-price" className="dropdown-item">Bảng giá</a>
-                                    <a href="testimonial.html" className="dropdown-item">Testimonial</a>
-                                </div>
-                            </div>
                             <a href="contact.html" className="nav-item nav-link">Liên hệ</a>
+                            {isLoggedIn ? (
+                                <div className="nav-item dropdown" title={dataUser?.fullName}>
+                                    <a href="#" className="nav-link">
+                                        <img className="rounded-circle"
+                                             src={dataUser?.urlImage}
+                                             alt="user.png" style={{width: 40}}/>
+                                    </a>
+                                    <div className="dropdown-menu m-0 bg-primary">
+                                        <a href="#" className="dropdown-item">Trang cá nhân</a>
+                                        <a href="#" className="dropdown-item" onClick={logout}>Đăng xuất</a>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <Link to="/auth?mode=login" className="nav-item nav-link">Đăng nhập</Link>||
+                                    <Link to="/auth?mode=register" className="nav-item nav-link">Đăng ký</Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
         </>
-    // Navbar End
+        // Navbar End
     )
 }
 
