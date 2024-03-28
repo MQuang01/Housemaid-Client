@@ -46,27 +46,45 @@ const TablePrice = () => {
                 </div>
                 <div className="row g-5">
                     <div className="col-lg-12 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay=".3s">
-                        <div className="rounded bg-light pricing-item">
+                        <div className="rounded bg-light pricing-item p-3">
                             <div className="bg-primary py-3 px-5 text-center rounded-top border-bottom border-dark">
                                 <h2 className="m-0">Bảng giá dịch vụ vệ sinh</h2>
                             </div>
-                            <table className="table table-light table-hover">
+                            <table className="border table table-light table-hover text-center">
                                 <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Image</th>
-                                    <th>Tên dịch vụ</th>
-                                    <th>Giá tiền</th>
-                                    <th>Thời gian ước tính</th>
-                                </tr>
+                                    <tr>
+                                        <th colSpan={5} className="text-start">
+                                            <select className="w-25 ms-xl-4 form-select form-select-lg">
+                                                <option>Tất cả công việc</option>
+                                                <option>Vệ sinh nha cửa</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Lựa chọn</th>
+                                        <th>Image</th>
+                                        <th>Tên dịch vụ</th>
+                                        <th>Giá tiền</th>
+                                        <th>Thời gian ước tính</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
+<<<<<<< HEAD
+                                {jobs.map((job, index) => (
+                                    <tr key={index} className="align-middle">
+                                        <td>
+                                            <div className="form-check d-flex justify-content-center align-items-center">
+                                                <input className="form-check-input" type="checkbox" value=""/>
+                                            </div>
+                                        </td>
+=======
                                 {job.map((job, index) => (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
+>>>>>>> c965edefe9e1cbc3ae6972372eda4d3b63d65051
                                         <td><img src={job.urlImage} height='40px' width='40px' alt="domestichelp"/></td>
-                                        <td>{job.name}</td>
-                                        <td>{job.price}</td>
+                                        <td className="text-start">{job.name}</td>
+                                        <td className="text-end">{job.price}</td>
                                         <td>~{job.timeApprox} phút/đơn vị</td>
                                     </tr>
                                 ))}

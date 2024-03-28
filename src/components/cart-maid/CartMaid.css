@@ -1,0 +1,29 @@
+.cart-maid .cart-container {
+    padding: 12px;
+}
+
+.cart-maid .cart-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart-maid .cart-item-logo {
+    width: 40px;
+}
+
+.cart-maid .close {
+    font-size: 1em;
+}
+
+.cart-maid .modal-maid {
+    display: none; /* Ẩn modal mặc định */
+    position: fixed; /* Không di chuyển khi cuộn trang */
+    z-index: 9999; /* Chỉ định lớp cao nhất */
+    right: 20px; /* Cách lề phải 20px */
+    bottom: 20px; /* Cách lề dưới 20px */
+    background-color: #fefefe;
+    border: 1px solid #888;
+    width: 300px; /* Độ rộng modal */
+    padding: 20px;
+    animation: fadeIn 0.5s; /* Hiệu ứng fade in */
+}

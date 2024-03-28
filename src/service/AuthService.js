@@ -1,11 +1,11 @@
 import axios from "axios";
-import toastr from "toastr";
+import {InforUrl} from "../until/InforUrl";
 
 export const accessToken = sessionStorage.getItem("user");
 export const Login = async (username, password) => {
     try {
         const response = await axios.post(
-            `http://localhost:8080/api/auths/login`, {
+            `${InforUrl}/auths/login`, {
                 username: username,
                 password: password,
             });
