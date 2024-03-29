@@ -12,6 +12,22 @@ const TablePrice = () => {
     const [categories, setCategories] = useState([])
     const [checkboxStates, setCheckboxStates] = useState(Array(jobs.length).fill(false));
 
+    // Xử lý validation trong input
+    const [validValueInput, setValidValueInput] = useState(Array(jobs.length).fill(1));
+
+    const handleChangeValueInput = (index, max, min, event) => {
+        const newValueInput = [...validValueInput];
+        const inputValue = parseInt(event.target.value); // Chuyển đổi giá trị nhập vào thành số nguyên
+        if (inputValue < min) {
+            newValueInput[index] = min;
+        } else if (inputValue > max) {
+            newValueInput[index] = max;
+        } else {
+            newValueInput[index] = inputValue;
+        }
+        setValidValueInput(newValueInput);
+    };
+
     // Check box từng dòng trong bảng
     const handleCheckboxClick = (index) => {
         const newCheckboxStates = [...checkboxStates];
@@ -64,7 +80,7 @@ const TablePrice = () => {
                             <table className="border table table-light table-hover text-center">
                                 <thead>
                                     <tr>
-                                        <th colSpan={5} className="text-start">
+                                        <th colSpan={6} className="text-start">
                                             <select className="w-25 ms-xl-4 form-select form-select-lg">
                                                 <option defaultValue="">Tất cả công việc</option>
                                                 {categories.map((category, index) => {
@@ -84,7 +100,14 @@ const TablePrice = () => {
                                 </thead>
                                 <tbody>
                                 {jobs.map((job, index) => (
-                                    <tr key={index} className="align-middle" style={{cursor: "pointer"}} onClick={() => handleCheckboxClick(index)}>
+                                    <tr key={index} className="align-middle" style={{cursor: "pointer"}}
+                                            onClick={(e) => {
+                                                // Kiểm tra xem sự kiện click có phát sinh từ Input không
+                                                if (e.target.tagName.toLowerCase() !== "input") {
+                                                    handleCheckboxClick(index)
+                                                }
+                                                }
+                                            }>
                                         <td>
                                             <div className="form-check d-flex justify-content-center align-items-center">
                                                 <input className="form-check-input" type="checkbox" checked={checkboxStates[index]} readOnly/>
@@ -93,9 +116,14 @@ const TablePrice = () => {
                                         <td><img src={job.urlImage} height='40px' width='40px' alt="domestichelp"/></td>
                                         <td className="text-start">{job.name}</td>
                                         <td className="text-end">{formatMoney(job.price)}</td>
-                                        <td className="text-start">~{job.timeApprox} phút/{job.typeJob === 'Quantity' ? "sản phẩm" : "m2"}</td>
+                                        <td className="text-end">~{job.timeApprox} phút/{job.typeJob === 'Quantity' ? "sản phẩm" : "m2"}</td>
                                         <td>
-                                            <input className="w-50 text-end" type={"number"} defaultValue={1} min={1} max={job.typeJob === 'Quantity' ? 20 : 10000 } />
+                                            <input className="w-50 text-end" type={"number"}
+                                                   defaultValue={validValueInput[index]}
+                                                   onChange={() => {
+                                                       const max = job.typeJob === 'Quantity' ? 20 : 10000 ;
+                                                       handleChangeValueInput(index, max, 1)
+                                                   }} />
                                         </td>
                                     </tr>
                                 ))}
