@@ -13,7 +13,14 @@ import {
     getTimeNow, parseStringToDate,
     parseTimeString
 } from "../../until/FormatTime";
-import {AMOUNT_TYPE, compareDate, compareDates, compareTime, formatDateString} from "../../until/app-constant";
+import {
+    AMOUNT_TYPE,
+    calculateEndTime,
+    compareDate,
+    compareDates,
+    compareTime,
+    formatDateString
+} from "../../until/app-constant";
 import {fetchListEmployee} from "../../service/EmployeeService";
 import {useAuth} from "../../context/AuthContext";
 import {useJwt} from "react-jwt";
@@ -104,7 +111,7 @@ const Order = () => {
     useEffect(() => {
         if (listJob.length === 0) return;
         calculateTotalPrice();
-        calculateTotalTimeApprox();
+        handleTimeApprox();
     }, [listJob]);
 
     useEffect(() => {
@@ -143,30 +150,8 @@ const Order = () => {
         }, 0);
         setTotalPriceRaw(totalPrice);
     };
-    const calculateEndTime = (startTime, totalTime) => {
-        const timeStart = formatHHMMSinceMidnightToMinutes(startTime);
-        const timeEnd = timeStart + formatHHMMSinceMidnightToMinutes(totalTime);
 
-        let endHour = Math.floor(timeEnd / 60);
-        let endMinute = timeEnd % 60;
-
-        // Kiểm tra và điều chỉnh giờ và phút nếu cần
-        if (endMinute >= 60) {
-            endHour += Math.floor(endMinute / 60);
-            endMinute %= 60;
-        }
-
-        let formattedEndHour = endHour.toString().padStart(2, '0');
-        let formattedEndMinute = endMinute.toString().padStart(2, '0');
-
-        if (endHour >= 24) {
-            formattedEndHour = (endHour - 24).toString().padStart(2, '0');
-        }
-
-        // console.log(`${formattedEndHour}:${formattedEndMinute}`)
-        return `${formattedEndHour}:${formattedEndMinute}`;
-    };
-    const calculateTotalTimeApprox = () => {
+    const handleTimeApprox = () => {
         const totalTime = listJob.reduce((total, job) => {
             if (job.checked) {
                 if (job.type === "Quantity") {
@@ -289,13 +274,10 @@ const Order = () => {
         if (value === "0") {
             return;
         }
-
-        // Kiểm tra loại công việc và giá trị nhập có hợp lệ không
         if (job.type === "Quantity" || job.type === "Size") {
             if (!/^\d+$/.test(value)) {
                 return;
             }
-
             // Chuyển đổi giá trị nhập thành số nguyên
             const intValue = parseInt(value);
 
@@ -317,7 +299,6 @@ const Order = () => {
             })
             setListJob([...updatedListJob]);
         }
-
     };
 
     const setSelectedEmployee = (event) => {
@@ -331,8 +312,6 @@ const Order = () => {
     }
 
     async function handleCreateOrder() {
-        // e.preventDefault();
-        // Set UserId vào rồi mở cái này lên
         if (!isLoggedIn) {
             if (window.confirm("Vui lòng đăng nhập trước khi đặt dịch vụ. Thông tin sẽ được chúng tôi lưu lại")) {
                 window.location.href = "/auth?mode=login";
@@ -374,20 +353,20 @@ const Order = () => {
                 }
             });
 
-        // const response = await fetchCreateOrder(initialOrder);
-        //
         try {
             await fetchCreateOrder(initialOrder);
             nav("/");
             toastr.success("Tạo hóa đơn thành công");
             localStorage.clear();
             localStorage.setItem("user", sessionStorage.getItem('user'))
-            // if (!response) {
-            //     nav("/");
-            //     toastr.error("Lỗi không xác định");
-            // }
         } catch (error) {
-            console.log(error)
+            if (error.response.data === ""){
+                toastr.error("Lỗi không xác định")
+                nav("/booking");
+            }
+            if (error.response.status === 403) {
+                console.log(error)
+            }
             toastr.error(error.response.data); // Hiển thị thông báo lỗi từ máy chủ
         }
     }
@@ -842,7 +821,8 @@ const Order = () => {
                                             </div>
                                             <ul className="list-group">
                                                 {listJob.filter(e => e.checked).map((job, index) => (
-                                                    <li key={index} className="list-group-item d-flex justify-content-between">
+                                                    <li key={index}
+                                                        className="list-group-item d-flex justify-content-between">
                                                         <label className="form-label ">
                                                             {job.name}
                                                         </label>
