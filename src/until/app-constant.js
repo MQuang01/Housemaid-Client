@@ -10,3 +10,7 @@ export const compareTime = (time1, time2) => {
     const time2Minutes = formatHHMMSinceMidnightToMinutes(time2);
     return time1Minutes - time2Minutes;
 }
+
+
+
+export const formatDateString = "YYYY-MM-DD";

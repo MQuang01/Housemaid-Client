@@ -8,6 +8,13 @@ const Navbar = () => {
     const { isLoggedIn, logout } = useAuth();
     const { decodedToken: dataUser } = useJwt(sessionStorage.getItem('user') || null);
 
+    const handleLogout = () => {
+        logout();
+        window.location.href = "/";
+        localStorage.clear();
+        // sessionStorage.removeItem('user');
+    }
+
     return(
         <>
         <div className="container-fluid topbar-top bg-primary">
@@ -71,7 +78,7 @@ const Navbar = () => {
                                     </a>
                                     <div className="dropdown-menu m-0 bg-primary">
                                         <a href="#" className="dropdown-item">Trang cá nhân</a>
-                                        <a href="#" className="dropdown-item" onClick={logout}>Đăng xuất</a>
+                                        <a href="#" className="dropdown-item" onClick={handleLogout}>Đăng xuất</a>
                                     </div>
                                 </div>
                             ) : (

@@ -1,7 +1,7 @@
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
-import {useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 import {fetchJobByCategoryId} from "../../service/JobService";
 import {formatMoney} from "../../until/FormatMoney";
 import toastr from "toastr";
@@ -9,34 +9,29 @@ import {
     formatHHMMSinceMidnightToMinutes,
     formatMinutesToDetail,
     formatMinutesToHHMM,
-    formatYYYYMMDDToDDMMYYYY, getTimeNow,
+    formatYYYYMMDDToDDMMYYYY,
+    getTimeNow, parseStringToDate,
     parseTimeString
 } from "../../until/FormatTime";
-import {AMOUNT_TYPE, compareTime} from "../../until/app-constant";
+import {AMOUNT_TYPE, compareDate, compareDates, compareTime, formatDateString} from "../../until/app-constant";
 import {fetchListEmployee} from "../../service/EmployeeService";
-
-// listjob khi list job thay đổi thì mình cập nhật state listjob thứ 2 là cập nhật ở localstorage
-// listJob không call api lấy ở localstorage
-// localstorage ko có thì call api xong cập nhật localstorage và state
-// listJob.filter(e=> e.checked).map(e => {
-// return {
-//                  "jobId": e.id,
-//                  "timeApprox": e.timeApprox,
-//                  "quantity": e.quantity,
-//                  "houseSize": e.houseSize
-//              }
-// }
+import {useAuth} from "../../context/AuthContext";
+import {useJwt} from "react-jwt";
+import {fetchCreateOrder} from "../../service/OrderService";
 
 
 const Booking = () => {
+    const nav = useNavigate();
     const location = useLocation();
     const {state} = location;
     const categoryId = state?.idCate;
-
+    const {isLoggedIn, logout} = useAuth();
+    const {decodedToken: dataUser} = useJwt(sessionStorage.getItem('user') || null);
 
     const initialOrder = {
         userId: null,
         categoryId: categoryId,
+        address: null,
         totalTimeApprox: null,
         totalPrice: null,
         quantityEmployee: null,
@@ -53,11 +48,6 @@ const Booking = () => {
     const [currentForm, setCurrentForm] = useState(1);
     const [selectedTime, setSelectedTime] = useState({start: getTimeNow(), end: '24:00'});
 
-    // 3 step
-    //  1. 'dataOfStep1' => localStorage
-    //  2. {quantityEmployee, workDay, timeStart} => localStorage
-    //  3. .... => localStorage
-    // submit => localStorage merge DTO
 
     const [listJob, setListJob] = useState(JSON.parse(localStorage.getItem('listJob')) || []);
 
@@ -66,10 +56,20 @@ const Booking = () => {
     const [infoForm2, setInfoForm2] = useState(JSON.parse(localStorage.getItem('infoForm2')) || {
         limitEmployee: 1,
         workDay: new Date().toISOString().slice(0, 10),
-        timeStart: selectedTime.start
+        timeStart: selectedTime.start,
+        note: ''
     });
     const [isConfirmPolicy, setIsConfirmPolicy] = useState(JSON.parse(localStorage.getItem('confirmPolicy') || 'false'));
     const [messageWarning, setMessageWarning] = useState('');
+
+    // state for form 3
+    const [infoForm3, setInfoForm3] = useState({
+        address: '',
+        phone: '',
+        name: '',
+        email: '',
+        note: infoForm2.note
+    });
 
     // state for calculate
     const [totalPriceRaw, setTotalPriceRaw] = useState(0);
@@ -97,7 +97,6 @@ const Booking = () => {
             setListEmployee(data.content);
         });
     }, []);
-
     const options = Array.from({length: listEmployee.length}, (_, index) => index + 1);
 
     // handle event checkbox
@@ -108,12 +107,18 @@ const Booking = () => {
         calculateTotalTimeApprox();
     }, [listJob]);
 
-    // useEffect(() => {
-    //     if (hasJobChecked) {
-    //         calculateTotalPrice();
-    //         calculateTotalTimeApprox()
-    //     }
-    // }, [listJob]);
+    useEffect(() => {
+        if (dataUser) {
+            setInfoForm3(prevState => ({
+                ...prevState,
+                address: dataUser.address,
+                phone: dataUser.phone,
+                email: dataUser.email,
+                name: dataUser.fullName
+            }));
+        }
+    }, [dataUser]);
+
 
     function clearChecked() {
         setListJob(listJob.map(item => ({...item, checked: false})));
@@ -122,7 +127,6 @@ const Booking = () => {
     function setAllChecked() {
         setListJob(listJob.map(item => ({...item, checked: true})));
     }
-
 
     //function Calculate
     const calculateTotalPrice = () => {
@@ -137,7 +141,6 @@ const Booking = () => {
             }
             return total;
         }, 0);
-        console.log(totalPrice)
         setTotalPriceRaw(totalPrice);
     };
     const calculateEndTime = (startTime, totalTime) => {
@@ -229,7 +232,6 @@ const Booking = () => {
             }
         }
     }, [timeApprox, infoForm2.limitEmployee]);
-
     useEffect(() => {
         localStorage.setItem('listJob', JSON.stringify(listJob));
     }, [listJob])
@@ -243,7 +245,6 @@ const Booking = () => {
         localStorage.setItem("confirmPolicy", JSON.stringify(isConfirmPolicy));
     }, [timeApprox, isConfirmPolicy]);
 
-    
 
     const handleNextForm = () => {
         if (currentForm === 1) {
@@ -255,14 +256,28 @@ const Booking = () => {
             }
         }
         if (currentForm === 2) {
+            // if (parseStringToDate(new Date(formatDateString)) === parseStringToDate(infoForm2.workDay)) {
+            //     if (compareTime(infoForm2.timeStart, getTimeNow()) < 0){
+            //         toastr.error("Chọn thời gian phù hợp")
+            //     }
+            //     return;
+            // }
+            // if (parseStringToDate(new Date(formatDateString)) > parseStringToDate(infoForm2.workDay)) {
+            //     toastr.error("Chọn thời gian phù hợp")
+            //     return;
+            // }
+
+            if (compareTime(infoForm2.timeStart, getTimeNow()) < 0) {
+                toastr.error("Chọn thời gian phù hợp")
+                return;
+            }
             if (!isConfirmPolicy) {
                 toastr.error("Vui lòng xác nhận điều khoản", "Cảnh báo");
-            } else if (compareTime(parseTimeString(infoForm2.timeStart), getTimeNow()) < 0) {
-                toastr.error("Vui lòng chọn thời gian phù hợp", "Cảnh báo");
             } else {
                 setCurrentForm(currentForm + 1);
             }
         }
+        window.scrollTo(0, 0);
     };
 
     const handleBackForm = () => {
@@ -315,25 +330,69 @@ const Booking = () => {
         setInfoForm2({...infoForm2, workDay: selectedValue})
     }
 
-
-    function handleCreateOrder() {
+    async function handleCreateOrder() {
+        // e.preventDefault();
         // Set UserId vào rồi mở cái này lên
-        // if (userId === null){
-        //     if (window.alert("Vui lòng đăng nhập trước khi đặt dịch vụ. Thông tin sẽ được chúng tôi lưu lại")) {
-        //         window.location.href = "/login";
-        //     }
-        //     return;
-        // }
-        initialOrder.listOrderDetail = listJob.filter(e => e.checked);
+        if (!isLoggedIn) {
+            if (window.confirm("Vui lòng đăng nhập trước khi đặt dịch vụ. Thông tin sẽ được chúng tôi lưu lại")) {
+                window.location.href = "/auth?mode=login";
+            }
+            return;
+        }
+        if (listJob.filter(e => e.checked).length === 0) {
+            toastr.error("Không thể tạo hóa đơn nếu không có dịch vụ. Chúng tôi sẽ chuyển đến đặt dịch vụ", "Cảnh báo");
+            setTimeout(() => {
+                window.location.href = "/booking";
+            }, 1500);
+            return;
+        }
+
+        initialOrder.userId = dataUser?.id;
+        initialOrder.address = infoForm3.address
         initialOrder.totalPrice = totalPriceRaw;
         initialOrder.totalTimeApprox = timeApprox;
         initialOrder.timeStart = infoForm2.timeStart;
         initialOrder.quantityEmployee = infoForm2.limitEmployee;
         initialOrder.workDay = infoForm2.workDay;
+        initialOrder.listOrderDetail = listJob.filter(e => e.checked)
+            .map(e => {
+                if (e.type === "Quantity") {
+                    return {
+                        id: e.id,
+                        timeApprox: e.timeApprox,
+                        quantity: e.quantity,
+                        houseSize: null
+                    }
+                }
+                if (e.type === "Size") {
+                    return {
+                        id: e.id,
+                        timeApprox: e.timeApprox,
+                        houseSize: e.houseSize,
+                        quantity: null
+                    }
+                }
+            });
 
-        console.log(initialOrder)
+        // const response = await fetchCreateOrder(initialOrder);
+        //
+        try {
+            await fetchCreateOrder(initialOrder);
+            nav("/");
+            toastr.success("Tạo hóa đơn thành công");
+            localStorage.clear();
+            localStorage.setItem("user", sessionStorage.getItem('user'))
+            // if (!response) {
+            //     nav("/");
+            //     toastr.error("Lỗi không xác định");
+            // }
+        } catch (error) {
+            console.log(error)
+            toastr.error(error.response.data); // Hiển thị thông báo lỗi từ máy chủ
+        }
     }
-    function getAmount(job){
+
+    function getAmount(job) {
         if (job.type === "Quantity") {
             return parseInt(job.quantity);
         }
@@ -341,102 +400,107 @@ const Booking = () => {
             return parseInt(job.houseSize);
         }
     }
+
+    function handleEditAddress(e) {
+
+    }
+
     return (
         <>
             <Navbar/>
-
-
             <div>
-                <nav >
-                    <ol className="breadcrumb mb-0 animated slideInDown" style={{fontSize:'20px',marginLeft:'112px',marginTop:'50px'}}>
-                        <li className="breadcrumb-item" ><a href="/">Trang chủ</a></li>
-                        <li className="breadcrumb-item " aria-current="page" style={{color: 'green'}}>Đặt lịch</li>
+                <nav>
+                    <ol className="breadcrumb mb-0 animated slideInDown"
+                        style={{fontSize: '20px', marginLeft: '112px', marginTop: '50px'}}>
+                        <li className="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                        <li className="breadcrumb-item "><a href="/booking">Đặt lịch</a></li>
                         <li className="breadcrumb-item " aria-current="page">Bước {currentForm}</li>
 
                     </ol>
                 </nav>
             </div>
-
             <div className="container-fluid py-3 wow fadeInUp" data-wow-delay=".3s">
                 <div className="container py-3">
                     <div className="bg-light px-4 py-3 rounded">
-                        <div className="text-center">
-                            <h1 className="display-5 mb-5">Chọn dịch vụ</h1>
-                        </div>
-
                         {/*form-1*/}
 
-                        {currentForm === 1 && (<form className="text-center mb-4" style={{
-                            borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)', padding: '20px'
-                        }}>
-                            <div className="table-responsive">
-                                <table className="table table-light table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Tên dich vụ</th>
-                                        <th className="text-end px-5">Khoảng giá</th>
-                                        <th className="text-end px-5">Thời gian ước tính</th>
-                                        <th>
-                                            Lựa chọn
-                                            <button
-                                                type="button"
-                                                className="ms-2 btn btn-primary"
-                                                onClick={listJob.filter(e => e.checked).length > 0 ? clearChecked : setAllChecked}
-                                            >
-                                                {listJob.filter(e => e.checked).length > 0 ? "Bỏ chọn tất cả" : "Chọn tất cả"}
+                        {currentForm === 1 && (
+                            <div className="container">
+                                <div className="text-center">
+                                    <h1 className="display-5 mb-5">Chọn dịch vụ</h1>
+                                </div>
+                                <form className="text-center mb-4" style={{
+                                    borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)', padding: '20px'
+                                }}>
+                                    <div className="table-responsive">
+                                        <table className="table table-light table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>Tên dich vụ</th>
+                                                <th className="text-end px-5">Khoảng giá</th>
+                                                <th className="text-end px-5">Thời gian ước tính</th>
+                                                <th>
+                                                    Lựa chọn
+                                                    <button
+                                                        type="button"
+                                                        className="ms-2 btn btn-primary"
+                                                        onClick={listJob.filter(e => e.checked).length > 0 ? clearChecked : setAllChecked}
+                                                    >
+                                                        {listJob.filter(e => e.checked).length > 0 ? "Bỏ chọn tất cả" : "Chọn tất cả"}
+                                                    </button>
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {listJob.map(job => (<tr key={job.id}>
+                                                <td>{job.name}</td>
+                                                <td className="text-end px-5">{formatMoney(job.price)}</td>
+                                                <td className="text-end px-5">~{job.timeApprox} phút
+                                                    /{job.type === "Quantity" ? "1 cái" : "m2"}</td>
+                                                <td className="d-flex align-items-center justify-content-center">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        checked={job.checked}
+                                                        onChange={(event) => handleCheckboxChange(event, job.id)}
+                                                    />
+                                                    <input
+                                                        className="form-control ms-2 form-control form-control-sm w-25"
+                                                        type="number"
+
+                                                        value={getAmount(job) || 1}
+                                                        onInput={(event) => handleInput(event, job)}
+                                                        disabled={!job.checked}
+                                                    />
+                                                </td>
+
+                                            </tr>))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="d-flex gap-5 justify-content-center">
+                                        <div className="d-flex gap-3 w-auto">
+                                            <label className="form-label text-success">
+                                                Tổng giá ước tính:
+                                            </label>
+                                            <p> ~{formatMoney(totalPriceRaw || 0)}</p>
+                                        </div>
+                                        <div className="d-flex gap-3 w-auto">
+                                            <label className="form-label text-success">Thời gian ước tính:</label>
+                                            <p> ~{formatMinutesToHHMM(timeApprox)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="row g-4">
+                                        <div className="col-md-12">
+                                            <button type="button"
+                                                    className="btn btn-primary border-0 rounded-pill px-4 py-3"
+                                                    onClick={handleNextForm}>Tiếp tục
                                             </button>
-                                        </th>
-
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {listJob.map(job => (<tr key={job.id}>
-                                        <td>{job.name}</td>
-                                        <td className="text-end px-5">{formatMoney(job.price)}</td>
-                                        <td className="text-end px-5">~{job.timeApprox} phút
-                                            /{job.type === "Quantity" ? "1 cái" : "m2"}</td>
-                                        <td className="d-flex align-items-center justify-content-center">
-                                            <input
-                                                className="form-check-input"
-                                                type="checkbox"
-                                                checked={job.checked}
-                                                onChange={(event) => handleCheckboxChange(event, job.id)}
-                                            />
-                                            <input
-                                                className="form-control ms-2 form-control form-control-sm w-25"
-                                                type="number"
-
-                                                value={getAmount(job) || 1}
-                                                onInput={(event) => handleInput(event, job)}
-                                                disabled={!job.checked}
-                                            />
-                                        </td>
-
-                                    </tr>))}
-                                    </tbody>
-                                </table>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            <div className="d-flex gap-5 justify-content-center">
-                                <div className="d-flex gap-3 w-auto">
-                                    <label className="form-label text-success">
-                                        Tổng giá ước tính:
-                                    </label>
-                                    <p> ~{formatMoney(totalPriceRaw || 0)}</p>
-                                </div>
-                                <div className="d-flex gap-3 w-auto">
-                                    <label className="form-label text-success">Thời gian ước tính:</label>
-                                    <p> ~{formatMinutesToHHMM(timeApprox)}</p>
-                                </div>
-                            </div>
-                            <div className="row g-4">
-                                <div className="col-md-12">
-                                    <button type="button"
-                                            className="btn btn-primary border-0 rounded-pill px-4 py-3"
-                                            onClick={handleNextForm}>Tiếp tục
-                                    </button>
-                                </div>
-                            </div>
-                        </form>)}
+                        )}
 
                         {/*form-2*/}
                         {currentForm === 2 && (
@@ -446,7 +510,6 @@ const Booking = () => {
                                       boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
                                       padding: '20px'
                                   }}>
-
                                 <div className="text-left row g-4 ">
                                     <div className="col-md-6">
                                         <button type="button"
@@ -489,7 +552,7 @@ const Booking = () => {
                                         </select>
                                     </div>
                                     <div className="col-md-6">
-                                        {messageWarning !== "" && <div className="alert alert-danger">
+                                        {messageWarning !== "" && <div className="alert alert-warning">
                                             {messageWarning}
                                             <label className="form-text text-danger">
                                                 * Lưu ý: Ý kiến tham khảo mang tính chất hỗ trợ vệ sinh nhà hoặc căn hộ
@@ -580,174 +643,222 @@ const Booking = () => {
                         )}
 
                         {currentForm === 3 && (
-                            <div className="d-flex justify-content-center align-items-center">
-                                <form action="#" className="mb-4" style={{
-                                    maxWidth: '700px',
-                                    width: '100%',
-                                    borderRadius: '10px',
-                                    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
-                                    padding: '20px'
-                                }}>
-                                    <div className="text-left row g-4">
-                                        <div className="col-md-12">
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary border-0 rounded-pill px-4 py-3"
-                                                onClick={handleBackForm}
-                                            >
-                                                Quay lại
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 mt-4 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label" htmlFor="basic-icon-default-address">
-                                                Địa chỉ</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
-                                            <span className="input-group-text"><i
-                                                className="fa fa-map-marker"></i></span>
-                                                <input
-                                                    type="text"
-                                                    id="basic-icon-default-address"
-                                                    className="form-control"
-                                                    placeholder="john.doe"
-                                                    aria-label="john.doe"
-                                                    aria-describedby="basic-icon-default-address"
-                                                />
-                                                <span
-                                                    id="basic-icon-default-address"
-                                                    className="input-group-text"
-                                                    style={{cursor: 'pointer', color: '#000', background: '#FDF000'}}
-                                                >
-                        Change
-                    </span>
+                            <div className="container">
+                                <div className="text-center">
+                                    <h1 className="display-5 mb-5">Xác nhận hóa đơn</h1>
+                                </div>
+                                <div className="row g-2">
+                                    <div className="col-md-9">
+                                        <form action="#" className="mb-4" style={{
+                                            maxWidth: '900px',
+                                            width: '100%',
+                                            borderRadius: '10px',
+                                            boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+                                            padding: '20px'
+                                        }}>
+                                            <div className="text-left row g-4">
+                                                <div className="col-md-12">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-primary border-0 rounded-pill px-4 py-3"
+                                                        onClick={handleBackForm}
+                                                    >
+                                                        Quay lại
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label" htmlFor="basic-icon-default-fullname">
-                                                Họ và Tên</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
-                                    <span id="basic-icon-default-fullname2" className="input-group-text">
-                                        <i className="fa fa-user"></i>
-                                    </span>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    id="basic-icon-default-fullname"
-                                                    placeholder="John Doe"
-                                                    aria-label="John Doe"
-                                                    aria-describedby="basic-icon-default-fullname2"
-                                                />
+                                            <div className="mb-3 mt-4 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label" htmlFor="basic-icon-default-address">
+                                                        Địa chỉ
+                                                    </label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
+                                                        <span className="input-group-text"><i
+                                                            className="fa fa-map-marker"></i></span>
+                                                        <input
+                                                            type="text"
+                                                            id="basic-icon-default-address"
+                                                            className="form-control"
+                                                            placeholder={infoForm3.address}
+                                                            value={infoForm3.address}
+                                                            // aria-label="john.doe"
+                                                            aria-describedby="basic-icon-default-address"
+                                                        />
+                                                        <span
+                                                            id="basic-icon-default-address"
+                                                            className="input-group-text"
+                                                            style={{
+                                                                cursor: 'pointer',
+                                                                color: '#000',
+                                                                background: '#FDF000'
+                                                            }}
+                                                            onClick={(e) => handleEditAddress(e)}
+                                                        >
+                                                            Change
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label"
-                                                   htmlFor="basic-icon-default-email">Email</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
+                                            <div className="mb-3 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label" htmlFor="basic-icon-default-fullname">
+                                                        Họ và Tên</label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
+                                            <span id="basic-icon-default-fullname2" className="input-group-text">
+                                                <i className="fa fa-user"></i>
+                                            </span>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            id="basic-icon-default-fullname"
+                                                            placeholder={infoForm3.name}
+                                                            value={infoForm3.name}
+                                                            // aria-label="John Doe"
+                                                            aria-describedby="basic-icon-default-fullname2"
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="mb-3 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label"
+                                                           htmlFor="basic-icon-default-email">Email</label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
                                                 <span className="input-group-text"><i
                                                     className="fa fa-envelope"></i></span>
-                                                <input
-                                                    type="text"
-                                                    id="basic-icon-default-email"
-                                                    className="form-control"
-                                                    placeholder="john.doe"
-                                                    aria-label="john.doe"
-                                                    aria-describedby="basic-icon-default-email2"
-                                                />
-                                                <span id="basic-icon-default-email2"
-                                                      className="input-group-text">@gmail.com</span>
+                                                        <input
+                                                            type="text"
+                                                            id="basic-icon-default-email"
+                                                            className="form-control"
+                                                            placeholder={infoForm3.email}
+                                                            value={infoForm3.email}
+                                                            // aria-label="john.doe"
+                                                            aria-describedby="basic-icon-default-email2"
+                                                            readOnly
+                                                        />
+                                                        {/*<span id="basic-icon-default-email2"*/}
+                                                        {/*      className="input-group-text">@gmail.com</span>*/}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label" htmlFor="basic-icon-default-phone">
-                                                Số điện thoại</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
+                                            <div className="mb-3 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label" htmlFor="basic-icon-default-phone">
+                                                        Số điện thoại</label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
                                         <span id="basic-icon-default-phone2" className="input-group-text">
                                             <i className="fa fa-phone"></i>
                                         </span>
-                                                <input
-                                                    type="text"
-                                                    id="basic-icon-default-phone"
-                                                    className="form-control phone-mask"
-                                                    placeholder="658 799 8941"
-                                                    aria-label="658 799 8941"
-                                                    aria-describedby="basic-icon-default-phone2"
-                                                />
+                                                        <input
+                                                            type="text"
+                                                            id="basic-icon-default-phone"
+                                                            className="form-control phone-mask"
+                                                            placeholder={infoForm3.phone}
+                                                            value={infoForm3.phone}
+                                                            // aria-label="658 799 8941"
+                                                            aria-describedby="basic-icon-default-phone2"
+                                                            readOnly
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label">Tổng giá tiền</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
-                                                <input type="text" className="form-control text-success fw-bold"
-                                                       value={formatMoney(totalPriceRaw)} readOnly/>
+                                            <div className="mb-3 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label">Tổng giá tiền</label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
+                                                        <input type="text" className="form-control text-success fw-bold"
+                                                               value={formatMoney(totalPriceRaw)} readOnly/>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label">Số lượng nhân viên</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
-                                                <input type="text" className="form-control text-success fw-bold"
-                                                       value={infoForm2.limitEmployee} readOnly/>
+                                            <div className="mb-3 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label">Số lượng nhân viên</label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
+                                                        <input type="text" className="form-control text-success fw-bold"
+                                                               value={infoForm2.limitEmployee} readOnly/>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label">Tổng thời gian làm việc</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
-                                                <input type="text" className="form-control text-success fw-bold"
-                                                       value={formatMinutesToDetail(timeApprox)}
-                                                       readOnly/>
+                                            <div className="mb-3 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label">Tổng thời gian làm việc</label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
+                                                        <input type="text" className="form-control text-success fw-bold"
+                                                               value={formatMinutesToDetail(timeApprox)}
+                                                               readOnly/>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                        <div className="col-md-4">
-                                            <label className="form-label">Ngày giờ làm việc</label>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="input-group input-group-merge">
-                                                <input type="text" className="form-control text-success fw-bold"
-                                                       value={`${infoForm2.timeStart}, ${formatYYYYMMDDToDDMMYYYY(infoForm2.workDay)}`}
-                                                       readOnly/>
+                                            <div className="mb-3 row">
+                                                <div className="col-md-4">
+                                                    <label className="form-label">Ngày giờ làm việc</label>
+                                                </div>
+                                                <div className="col-md-8">
+                                                    <div className="input-group input-group-merge">
+                                                        <input type="text" className="form-control text-success fw-bold"
+                                                               value={`${infoForm2.timeStart}, ${formatYYYYMMDDToDDMMYYYY(infoForm2.workDay)}`}
+                                                               readOnly/>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                            <div className="text-center row g-4 ">
+                                                <div className="col-md-12">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-primary border-0 rounded-pill px-4 py-3"
+                                                        onClick={(e) => handleCreateOrder(e)}
+                                                    >
+                                                        Đặt ngay
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div className="text-center row g-4 ">
-                                        <div className="col-md-12">
-                                            <button
-                                                type="button"
-                                                className="btn btn-primary border-0 rounded-pill px-4 py-3"
-                                                onClick={handleCreateOrder}
-                                            >
-                                                Đặt ngay
-                                            </button>
-                                        </div>
+                                    <div className="col-md-3 form-group">
+                                        <form className=" mb-4"
+                                              style={{
+                                                  borderRadius: '10px',
+                                                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+                                                  padding: '20px'
+                                              }}>
+                                            <div className="text-center">
+                                                <h3 className="mb-5 ">Dịch vụ đã chọn</h3>
+                                            </div>
+                                            <ul className="list-group">
+                                                {listJob.filter(e => e.checked).map((job, index) => (
+                                                    <li key={index} className="list-group-item d-flex justify-content-between">
+                                                        <label className="form-label ">
+                                                            {job.name}
+                                                        </label>
+                                                        <input
+                                                            type="checkbox"
+                                                            name="job"
+                                                            checked={job.checked}
+                                                            onChange={(event) => handleCheckboxChange(event, job.id)}
+                                                        />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </form>
                                     </div>
-                                </form>
+
+                                </div>
                             </div>
                         )}
                     </div>
