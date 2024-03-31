@@ -1,6 +1,6 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Suspense, useEffect, useState} from "react";
-import Booking from "./components/booking/Booking";
+import Order from "./components/order/Order";
 import Auth from "./components/auth/Auth";
 import {AuthProvider} from "./context/AuthContext";
 import Home from "./screens/Home";
@@ -19,7 +19,7 @@ function App() {
                         <Routes>
                             <Route path='/auth' element={<Auth />} />
                             <Route path='/' element={<Home/>} />
-                            <Route path='/booking' element={<Booking />} />
+                            <Route path='/booking' element={<Order />} />
                             <Route path='/userinfo' element={<UserInfo />} />
                             <Route path='/orderconfirm' element={<OrderConfirm />} />
                         </Routes>

@@ -20,7 +20,7 @@ import {useJwt} from "react-jwt";
 import {fetchCreateOrder} from "../../service/OrderService";
 
 
-const Booking = () => {
+const Order = () => {
     const nav = useNavigate();
     const location = useLocation();
     const {state} = location;
@@ -413,7 +413,7 @@ const Booking = () => {
                     <ol className="breadcrumb mb-0 animated slideInDown"
                         style={{fontSize: '20px', marginLeft: '112px', marginTop: '50px'}}>
                         <li className="breadcrumb-item"><a href="/">Trang chủ</a></li>
-                        <li className="breadcrumb-item "><a href="/booking">Đặt lịch</a></li>
+                        <li className="breadcrumb-item "><a href="/src/components/order/Order">Đặt lịch</a></li>
                         <li className="breadcrumb-item " aria-current="page">Bước {currentForm}</li>
 
                     </ol>
@@ -867,6 +867,6 @@ const Booking = () => {
             <Footer/>
         </>);
 }
-export default Booking;
+export default Order;
 
 
