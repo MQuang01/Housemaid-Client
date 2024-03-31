@@ -10,6 +10,7 @@ export const Login = async (username, password) => {
                 password: password,
             });
         sessionStorage.setItem("user", response.data);
+        localStorage.setItem("user", response.data);
         return true;
     } catch (error) {
         return false;
