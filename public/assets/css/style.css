@@ -50,7 +50,7 @@
 }
 
 .btn.btn-primary:hover {
-    box-shadow: inset 200px 0 0 0 var(--bs-dark) !important;
+    box-shadow: inset 500px 0 0 0 var(--bs-dark) !important;
     color: var(--bs-primary) !important;
 }
 
