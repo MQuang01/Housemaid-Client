@@ -15,12 +15,10 @@ function Home() {
             <Navbar/>
             <Slide/>
             <Category/>
-            {/*<CartMaid />*/}
+            <CartMaid />
             <TablePrice/>
             <Footer/>
-            <button className="btn btn-primary rounded-circle border-3 cart-item">
-                <img src={"../assets/img/maidA.png"} alt="cartMaid.png" className="w-100"/>
-            </button>
+
         </div>
     );
 }
