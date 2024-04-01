@@ -6,20 +6,16 @@ import {fetchJobByCategoryId} from "../../service/JobService";
 import {formatMoney} from "../../until/FormatMoney";
 import toastr from "toastr";
 import {
-    formatHHMMSinceMidnightToMinutes,
     formatMinutesToDetail,
     formatMinutesToHHMM,
     formatYYYYMMDDToDDMMYYYY,
-    getTimeNow, parseStringToDate,
+    getTimeNow,
     parseTimeString
 } from "../../until/FormatTime";
 import {
     AMOUNT_TYPE,
     calculateEndTime,
-    compareDate,
-    compareDates,
     compareTime,
-    formatDateString
 } from "../../until/app-constant";
 import {fetchListEmployee} from "../../service/EmployeeService";
 import {useAuth} from "../../context/AuthContext";
@@ -139,10 +135,10 @@ const Order = () => {
     const calculateTotalPrice = () => {
         const totalPrice = listJob.reduce((total, job) => {
             if (job.checked) {
-                if (job.type === "Quantity") {
+                if (job.typeJob === "Quantity") {
                     return total + (parseInt(job.price) * job.quantity);
                 }
-                if (job.type === "Size") {
+                if (job.typeJob === "Size") {
                     return total + (parseInt(job.price) * job.houseSize);
                 }
             }
@@ -154,10 +150,10 @@ const Order = () => {
     const handleTimeApprox = () => {
         const totalTime = listJob.reduce((total, job) => {
             if (job.checked) {
-                if (job.type === "Quantity") {
+                if (job.typeJob === "Quantity") {
                     return total + (parseInt(job.quantity) * parseInt(job.timeApprox));
                 }
-                if (job.type === "Size") {
+                if (job.typeJob === "Size") {
                     return total + (parseInt(job.houseSize) * parseInt(job.timeApprox));
                 }
             }
