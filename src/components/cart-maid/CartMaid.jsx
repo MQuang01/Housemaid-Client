@@ -103,8 +103,9 @@ const CartMaid = () => {
                                   <table className="border table table-light text-center rounded">
                                       <thead>
                                           <tr>
-                                              <th className={"col-8"}>Tên công việc</th>
+                                              <th className={"col"}>Tên công việc</th>
                                               <th className={"col-4"}>Số lượng</th>
+                                              <th className={"col"}></th>
                                           </tr>
                                       </thead>
                                       <tbody>
@@ -122,6 +123,7 @@ const CartMaid = () => {
                                                           onChange={(e) => handleQuantityChange(job.id, e)}
                                                       />
                                                   </td>
+                                                  <td className={"text-start"}>{job.typeJob === 'Quantity' ? "sản phẩm" : "m2"}</td>
                                               </tr>
                                           ))}
                                       </tbody>

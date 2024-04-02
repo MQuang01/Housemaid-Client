@@ -207,9 +207,9 @@ const TablePrice = () => {
                                     {selectCategory !== undefined ? (
                                         <tr>
                                             <th scope="col">Image</th>
-                                            <th scope="col">Tên dịch vụ</th>
-                                            <th scope="col">Giá tiền</th>
-                                            <th scope="col">Thời gian ước tính</th>
+                                            <th scope="col" className={"text-start"}>Tên dịch vụ</th>
+                                            <th scope="col" className={"text-end"}>Giá tiền</th>
+                                            <th scope="col" className={"text-end"}>Thời gian ước tính</th>
                                             <th scope="col">Thêm vào giỏ hàng</th>
                                         </tr>
                                     ) : (
@@ -245,7 +245,7 @@ const TablePrice = () => {
                                                         setSortKey('name');
                                                         toggleSortOrder();}
                                                     }
-                                                    className="col-2"
+                                                    className="col-2 text-start"
                                                     style={{cursor: "pointer"}}
                                                 >
                                                     Tên công việc {sortKey === 'name'
@@ -258,14 +258,14 @@ const TablePrice = () => {
                                                         setSortKey('price');
                                                         toggleSortOrder();}
                                                     }
-                                                    className="col-2"
+                                                    className="col-2 text-end"
                                                     style={{cursor: "pointer"}}
                                                 >Giá tiền {sortKey === 'price'
                                                     && (sortOrder === 'asc' ?
                                                         <i class="fa-solid fa-sort-up"></i> :
                                                         <i class="fa-solid fa-sort-down"></i>)}
                                                 </th>
-                                                <th className="col-3"
+                                                <th className="col-3 text-end"
                                                     onClick={() => {
                                                         setSortKey('timeApprox');
                                                         toggleSortOrder();}
@@ -275,7 +275,7 @@ const TablePrice = () => {
                                                     && (sortOrder === 'asc' ?
                                                         <i class="fa-solid fa-sort-up"></i> :
                                                         <i class="fa-solid fa-sort-down"></i>)}</th>
-                                                <th className="col-2">Dịch vụ</th>
+                                                <th className="col-2 text-start">Dịch vụ</th>
                                             </tr>
                                         </>
                                     )
