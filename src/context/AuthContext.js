@@ -1,11 +1,15 @@
-import React, {createContext, useContext, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {accessToken, Logout} from "../service/AuthService";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(!!accessToken);
-
+    useEffect(() => {
+        if(localStorage.getItem('accessToken')){
+            setIsLoggedIn(true)
+        }
+    }, []);
     const login = () => {
         setIsLoggedIn(true)
     }

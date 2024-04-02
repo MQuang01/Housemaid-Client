@@ -1,12 +1,19 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Link } from "react-router-dom";
 import {useAuth} from "../../context/AuthContext";
 import {useJwt} from "react-jwt";
-import {accessToken} from "../../service/AuthService";
 
 const Navbar = () => {
     const { isLoggedIn, logout } = useAuth();
-    const { decodedToken: dataUser } = useJwt(sessionStorage.getItem('user') || null);
+    const [dataUser, setDataUser] = useState( {}) ;
+
+    useEffect(() => {
+        console.log("22", localStorage.getItem("infoUser"))
+        if(localStorage.getItem("infoUser")) {
+            setDataUser(JSON.parse(localStorage.getItem("infoUser")));
+        }
+    }, [])
+
 
     const handleLogout = () => {
         logout();
@@ -14,6 +21,7 @@ const Navbar = () => {
         localStorage.clear();
         // sessionStorage.removeItem('user');
     }
+
 
     return(
         <>
@@ -23,7 +31,7 @@ const Navbar = () => {
                     <div className="d-flex align-items-center flex-shrink-0 topbar-info">
                         <a href="#" className="me-4 text-secondary"><i className="fas fa-map-marker-alt me-2 text-dark"></i>28 Nguyễn Tri Phương</a>
                         <a href="#" className="me-4 text-secondary"><i className="fas fa-phone-alt me-2 text-dark"></i>+(84) 123 456 84 </a>
-                        <a href="#" className="text-secondary"><i className="fas fa-envelope me-2 text-dark"></i>Example@example.com</a>
+                        <a href="#" className="text-secondary"><i className="fas fa-envelope me-2 text-dark"></i>housemaid.huecity@gmail.com</a>
                     </div>
                     <div className="text-end pe-4 me-4 border-end border-dark search-btn">
                         <div className="search-form">
@@ -73,8 +81,8 @@ const Navbar = () => {
                                 <div className="nav-item dropdown" title={dataUser?.fullName}>
                                     <a href="#" className="nav-link">
                                         <img className="rounded-circle"
-                                             src={dataUser?.urlImage}
-                                             alt="user.png" style={{width: 40}}/>
+                                             src={dataUser?.fileInfoResDto ? dataUser?.fileInfoResDto.url : "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                                             alt="user.png" style={{width: 50, height: 40}}/>
                                     </a>
                                     <div className="dropdown-menu m-0 bg-primary">
                                         <a href="#" className="dropdown-item">Trang cá nhân</a>
