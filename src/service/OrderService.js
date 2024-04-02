@@ -14,9 +14,9 @@ export const fetchCreateOrder = async (data) => {
     // return response.data
 }
 
-export const fetchOrderByCode = async (code) => {
+export const fetchOrderByCode = async (code, id) => {
     const jwt = localStorage.getItem('accessToken');
-    const response = await axios.get(`${InforUrl}/orders/info-order/${code}`, {
+    const response = await axios.get(`${InforUrl}/orders/info-order/${code}/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${jwt}`
