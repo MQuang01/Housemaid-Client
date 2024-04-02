@@ -1,23 +1,33 @@
 import Navbar from "../navbar/Navbar";
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useParams, useSearchParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import './OrderConfirm.css'
 import Footer from "../footer/Footer";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchOrderByCode} from "../../service/OrderService";
+import {formatMoney} from "../../until/FormatMoney";
+import {formatMinutesToDetail, formatYYYYMMDDToDDMMYYYY} from "../../until/FormatTime";
 
 const OrderConfirm = () => {
     const [infoUser, setInfoUser] = useState({});
     const dispatch = useDispatch();
-    const location = useLocation().pathname;
-    const code = location.split("/")[2];
+    const location = useLocation();
+    //const searchParams = new URLSearchParams(location.search);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const cod = searchParams.get('cod');
+    const userId = searchParams.get('userId');
+
     const [dataUser, setDataUser] = useState(JSON.parse(localStorage.getItem("infoUser")) || {});
     const [dataOrder, setDataOrder] = useState({});
 
 
+
     useEffect(() => {
         if (dataUser) {
-            fetchOrderByCode(code).then(res => {
+            // console.log(cod, userId);
+
+            fetchOrderByCode(cod, userId).then(res => {
                 setDataOrder(res)
             })
             setInfoUser({
@@ -27,7 +37,13 @@ const OrderConfirm = () => {
             });
         }
     }, [dataUser]);
-
+    // useEffect(() => {
+    //     // const params = [];
+    //     // for(let entry of searchParams.entries()) {
+    //     //     params.push(entry);
+    //     // }
+    //     console.log(searchParams.get('userId'));
+    // }, []);
     return (
         <>
             <Navbar/>
@@ -75,7 +91,7 @@ const OrderConfirm = () => {
                                             </div>
                                             <div className="order-info">
                                                 <h6>Địa chỉ: </h6>
-                                                <h6>{dataOrder.address}</h6>
+                                                <h6>{dataOrder.address || ""}</h6>
                                             </div>
                                             <div className="order-info">
                                                 <h6>Email: </h6>
@@ -93,27 +109,27 @@ const OrderConfirm = () => {
 
                                             <div className="order-info">
                                                 <h6>Số lượng nhân viên: </h6>
-                                                <h6>{dataOrder.quantityEmployee}</h6>
+                                                <h6>{dataOrder.quantityEmployee || ""}</h6>
                                             </div>
                                             <div className="order-info">
                                                 <h6>Ngày làm việc: </h6>
-                                                {/*<h6>{infoOrder.workDay}</h6>*/}
+                                                <h6>{dataOrder.workDay? formatYYYYMMDDToDDMMYYYY(dataOrder.workDay) : ""}</h6>
                                             </div>
                                             <div className="order-info">
                                                 <h6>Thời gian bắt đầu làm việc: </h6>
-                                                {/*<h6>{infoOrder.timeStart}</h6>*/}
+                                                <h6>{dataOrder.timeStart || ""}</h6>
                                             </div>
                                             <div className="order-info">
                                                 <h6>Ghi chú: </h6>
-                                                {/*<h6>{infoOrder.note}</h6>*/}
+                                                <h6>{dataOrder.note || ""}</h6>
                                             </div>
                                             <div className="order-info">
                                                 <h6>Tổng thời gian: </h6>
-                                                {/*<h6>{infoOrder.totalTimeApprox}</h6>*/}
+                                                <h6>{dataOrder.totalTimeApprox? formatMinutesToDetail(dataOrder.totalTimeApprox) : ""}</h6>
                                             </div>
                                             <div className="order-info">
                                                 <h6>Tổng giá tiền: </h6>
-                                                {/*<h6>{infoOrder.totalPrice}</h6>*/}
+                                                <h6>{dataOrder.total? formatMoney(dataOrder.total) : ""}</h6>
                                             </div>
 
 

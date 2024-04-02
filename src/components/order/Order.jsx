@@ -372,6 +372,7 @@ const Order = () => {
             localStorage.removeItem("timeApprox");
             localStorage.removeItem("infoForm2");
             localStorage.removeItem("totalOrderPrice");
+            localStorage.setItem("quantityEmployee", infoForm2.limitEmployee);
         } catch (error) {
             if (error.response.data === "") {
                 toastr.error("Lỗi không xác định")

@@ -12,8 +12,9 @@ import PrivateRoute from "./components/privateroute/PrivateRoute";
 
 
 function App() {
-    let [isAuth, setIsAuth] = useState(false);
-    let auth = useAuth();
+    // let [isAuth, setIsAuth] = useState(false);
+    // let auth = useAuth();
+
     return (
         <>
             <Provider store={store}>
@@ -26,9 +27,15 @@ function App() {
                                 <Route path='/booking' element={<Order/>} />
                                 {/*<Route path='/userinfo' element={<UserInfo/>}/>*/}
 
-                                <Route path='/confirm' element={<PrivateRoute/>}>
-                                    <Route path=':orderCode' element={<OrderConfirm/>}/>
+                                <Route path='/confirm/*' element={<PrivateRoute/>}>
+                                    <Route path='' element={<OrderConfirm/>}/>
+                                    {/*<Route path=':orderCode' element={<OrderConfirm/>}/>*/}
                                 </Route>
+
+                                {/*<Route*/}
+                                {/*    path="/confirm/:orderCode/userId=:userId"*/}
+                                {/*    element={<PrivateRoute><OrderConfirm /></PrivateRoute>}*/}
+                                {/*/>*/}
 
                             </Routes>
                         </Suspense>
