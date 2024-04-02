@@ -58,7 +58,7 @@ export const getTimeNow = () =>{
     return `${hours}:${minutes}`
 }
 
-// export const parseStringToDate = (dateString) =>{
-//     const [year, month, day] = dateString.split('-').map(Number);
-//     return `${year}-${month}-${day}`
-// }
+export const parseStringToDate = (dateString) =>{
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}

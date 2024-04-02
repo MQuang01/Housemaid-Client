@@ -1,20 +1,37 @@
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import { Login } from "../../service/AuthService";
+import {fetchUserByUserName, Login} from "../../service/AuthService";
 import * as yup from "yup";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAuth} from "../../context/AuthContext";
 import toastr from "toastr";
 import LoadingModal from "../loading/LoadingModal";
+import {useDispatch, useSelector} from "react-redux";
+import {setCurrentUser} from "../../reducer/Action";
+
 
 const schema = yup.object({
     username: yup.string().required("Vui lòng nhập tên tài khoản"),
     password: yup.string().required("Vui lòng nhập mật khẩu"),
 })
 const LoginForm = () => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
+    const location = useLocation();
+    const [redirectUrl, setRedirectUrl] = useState('');
+
+    useEffect(() => {
+        if (location && location.search) {
+            const searchParams = new URLSearchParams(location.search);
+            const redirectParam = searchParams.get('redirect_url');
+
+            setRedirectUrl(redirectParam);
+
+        }
+
+    }, [location.search]);
 
     const {
         register,
@@ -24,7 +41,9 @@ const LoginForm = () => {
     } = useForm({
         resolver: yupResolver(schema)
     })
-    const { login } = useAuth();
+    const {login} = useAuth();
+
+
     const handleLogin = async (data, e) => {
         e.preventDefault();
         setLoading(true); // Bắt đầu hiển thị loading khi bắt đầu xử lý
@@ -32,8 +51,17 @@ const LoginForm = () => {
         try {
             const loggedIn = await Login(data.username, data.password);
             if (loggedIn) {
+
+
+                let user = await fetchUserByUserName(data.username);
                 login();
-                navigate("/");
+                if (redirectUrl) {
+                    navigate(redirectUrl);
+                } else {
+                    console.log("vo /")
+                    // navigate("/");
+                }
+
             } else {
                 toastr.error("Tên tài khoản hoặc mật khẩu bị sai");
             }
@@ -123,12 +151,13 @@ const LoginForm = () => {
                     </form>
 
                     <div className="text-center">
-                        <small>Bạn chưa có tài khoản? <Link to="/auth?mode=register" className="text-info fw-bold">Đăng ký</Link></small>
+                        <small>Bạn chưa có tài khoản? <Link to="/auth?mode=register" className="text-info fw-bold">Đăng
+                            ký</Link></small>
                     </div>
                 </div>
             </div>
             {/* Xử lý hiển thị loading */}
-            <LoadingModal loading={loading} />
+            <LoadingModal loading={loading}/>
         </div>
     )
 }

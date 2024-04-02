@@ -9,7 +9,7 @@ import {
     formatMinutesToDetail,
     formatMinutesToHHMM,
     formatYYYYMMDDToDDMMYYYY,
-    getTimeNow,
+    getTimeNow, parseStringToDate,
     parseTimeString
 } from "../../until/FormatTime";
 import {
@@ -19,8 +19,8 @@ import {
 } from "../../until/app-constant";
 import {fetchListEmployee} from "../../service/EmployeeService";
 import {useAuth} from "../../context/AuthContext";
-import {useJwt} from "react-jwt";
 import {fetchCreateOrder} from "../../service/OrderService";
+import ModalConfirm from "./ModalConfirm";
 
 
 const Order = () => {
@@ -29,11 +29,11 @@ const Order = () => {
     const {state} = location;
     const categoryId = state?.idCate;
     const {isLoggedIn, logout} = useAuth();
-    const {decodedToken: dataUser} = useJwt(sessionStorage.getItem('user') || null);
+    const [dataUser, setDataUser] = useState(JSON.parse(localStorage.getItem("infoUser")) || {});
 
     const initialOrder = {
         userId: null,
-        categoryId: categoryId,
+        categoryId: null,
         address: null,
         totalTimeApprox: null,
         totalPrice: null,
@@ -73,10 +73,11 @@ const Order = () => {
         email: '',
         note: infoForm2.note
     });
-
+    const [show, setShowModalConfirm] = useState(false);
     // state for calculate
     const [totalPriceRaw, setTotalPriceRaw] = useState(0);
     const [timeApprox, setTimeApprox] = useState(JSON.parse(localStorage.getItem('timeApprox')) || 0);
+
 
 
     useEffect(() => {
@@ -248,9 +249,15 @@ const Order = () => {
             //     return;
             // }
 
-            if (compareTime(infoForm2.timeStart, getTimeNow()) < 0) {
+            if (new Date() > parseStringToDate(infoForm2.workDay)) {
                 toastr.error("Chọn thời gian phù hợp")
                 return;
+            }
+            if (new Date() === parseStringToDate(infoForm2.workDay)) {
+                if (compareTime(infoForm2.timeStart, getTimeNow()) < 0) {
+                    toastr.error("Chọn thời gian phù hợp")
+                    return;
+                }
             }
             if (!isConfirmPolicy) {
                 toastr.error("Vui lòng xác nhận điều khoản", "Cảnh báo");
@@ -270,24 +277,24 @@ const Order = () => {
         if (value === "0") {
             return;
         }
-        if (job.type === "Quantity" || job.type === "Size") {
+        if (job.typeJob === "Quantity" || job.typeJob === "Size") {
             if (!/^\d+$/.test(value)) {
                 return;
             }
             // Chuyển đổi giá trị nhập thành số nguyên
             const intValue = parseInt(value);
 
-            const amountType = AMOUNT_TYPE[job.type];
+            const amountType = AMOUNT_TYPE[job.typeJob];
             if (value > amountType) {
                 return;
             }
             //cập nhật job ở trong list
             const updatedListJob = listJob.map(item => {
                 if (item.id === job.id) {
-                    if (item.type === "Quantity") {
+                    if (item.typeJob === "Quantity") {
                         return {...item, quantity: intValue};
                     }
-                    if (item.type === "Size") {
+                    if (item.typeJob === "Size") {
                         return {...item, houseSize: intValue};
                     }
                 }
@@ -307,7 +314,11 @@ const Order = () => {
         setInfoForm2({...infoForm2, workDay: selectedValue})
     }
 
-    async function handleCreateOrder() {
+    function showConfirmOrder() {
+        setShowModalConfirm(true)
+    }
+
+    async function handleConfirmOrder() {
         if (!isLoggedIn) {
             if (window.confirm("Vui lòng đăng nhập trước khi đặt dịch vụ. Thông tin sẽ được chúng tôi lưu lại")) {
                 window.location.href = "/auth?mode=login";
@@ -321,8 +332,8 @@ const Order = () => {
             }, 1500);
             return;
         }
-
         initialOrder.userId = dataUser?.id;
+        initialOrder.categoryId = categoryId;
         initialOrder.address = infoForm3.address
         initialOrder.totalPrice = totalPriceRaw;
         initialOrder.totalTimeApprox = timeApprox;
@@ -331,7 +342,7 @@ const Order = () => {
         initialOrder.workDay = infoForm2.workDay;
         initialOrder.listOrderDetail = listJob.filter(e => e.checked)
             .map(e => {
-                if (e.type === "Quantity") {
+                if (e.typeJob === "Quantity") {
                     return {
                         id: e.id,
                         timeApprox: e.timeApprox,
@@ -339,7 +350,7 @@ const Order = () => {
                         houseSize: null
                     }
                 }
-                if (e.type === "Size") {
+                if (e.typeJob === "Size") {
                     return {
                         id: e.id,
                         timeApprox: e.timeApprox,
@@ -353,10 +364,16 @@ const Order = () => {
             await fetchCreateOrder(initialOrder);
             nav("/");
             toastr.success("Tạo hóa đơn thành công");
-            localStorage.clear();
-            localStorage.setItem("user", sessionStorage.getItem('user'))
+            setTimeout(() => {
+                toastr.success("Hãy kiểm tra mail của bạn", {autoClose: 5000});
+            }, 1500)
+            localStorage.removeItem("listJob");
+            localStorage.removeItem("confirmPolicy");
+            localStorage.removeItem("timeApprox");
+            localStorage.removeItem("infoForm2");
+            localStorage.removeItem("totalOrderPrice");
         } catch (error) {
-            if (error.response.data === ""){
+            if (error.response.data === "") {
                 toastr.error("Lỗi không xác định")
                 nav("/booking");
             }
@@ -366,19 +383,20 @@ const Order = () => {
             toastr.error(error.response.data); // Hiển thị thông báo lỗi từ máy chủ
         }
     }
-
     function getAmount(job) {
-        if (job.type === "Quantity") {
+        if (job.typeJob === "Quantity") {
             return parseInt(job.quantity);
         }
-        if (job.type === "Size") {
+        if (job.typeJob === "Size") {
             return parseInt(job.houseSize);
         }
     }
 
     function handleEditAddress(e) {
-
+        setInfoForm3({...infoForm3, address: e.target.value})
     }
+
+
 
     return (
         <>
@@ -694,7 +712,6 @@ const Order = () => {
                                                             value={infoForm3.name}
                                                             // aria-label="John Doe"
                                                             aria-describedby="basic-icon-default-fullname2"
-                                                            readOnly
                                                         />
                                                     </div>
                                                 </div>
@@ -716,7 +733,6 @@ const Order = () => {
                                                             value={infoForm3.email}
                                                             // aria-label="john.doe"
                                                             aria-describedby="basic-icon-default-email2"
-                                                            readOnly
                                                         />
                                                         {/*<span id="basic-icon-default-email2"*/}
                                                         {/*      className="input-group-text">@gmail.com</span>*/}
@@ -730,9 +746,9 @@ const Order = () => {
                                                 </div>
                                                 <div className="col-md-8">
                                                     <div className="input-group input-group-merge">
-                                        <span id="basic-icon-default-phone2" className="input-group-text">
-                                            <i className="fa fa-phone"></i>
-                                        </span>
+                                            <span id="basic-icon-default-phone2" className="input-group-text">
+                                                <i className="fa fa-phone"></i>
+                                            </span>
                                                         <input
                                                             type="text"
                                                             id="basic-icon-default-phone"
@@ -797,7 +813,7 @@ const Order = () => {
                                                     <button
                                                         type="button"
                                                         className="btn btn-primary border-0 rounded-pill px-4 py-3"
-                                                        onClick={(e) => handleCreateOrder(e)}
+                                                        onClick={(e) => showConfirmOrder(e)}
                                                     >
                                                         Đặt ngay
                                                     </button>
@@ -840,6 +856,7 @@ const Order = () => {
                     </div>
                 </div>
             </div>
+            <ModalConfirm show={show} setShow={setShowModalConfirm} handleConfirmOrder={handleConfirmOrder} ></ModalConfirm>
             <Footer/>
         </>);
 }
