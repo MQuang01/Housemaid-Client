@@ -9,8 +9,8 @@ import toastr from "toastr";
 import LoadingModal from "../loading/LoadingModal";
 
 const schema = yup.object({
-    username: yup.string().required("Please enter username"),
-    password: yup.string().required("Please enter password"),
+    username: yup.string().required("Vui lòng nhập tên tài khoản"),
+    password: yup.string().required("Vui lòng nhập mật khẩu"),
 })
 const LoginForm = () => {
     let navigate = useNavigate();
