@@ -1,31 +1,41 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Outlet, Route, Routes} from "react-router-dom";
 import {Suspense, useEffect, useState} from "react";
 import Order from "./components/order/Order";
 import Auth from "./components/auth/Auth";
-import {AuthProvider} from "./context/AuthContext";
+import {AuthProvider, useAuth} from "./context/AuthContext";
 import Home from "./screens/Home";
-
+import {Provider} from 'react-redux';
 import UserInfo from "./components/userinfo/UserInfo";
 import OrderConfirm from "./components/orderconfirm/OrderConfirm";
+import store from "./reducer/StoreRedux";
+import PrivateRoute from "./components/privateroute/PrivateRoute";
 
 
 function App() {
-
-    return(
+    let [isAuth, setIsAuth] = useState(false);
+    let auth = useAuth();
+    return (
         <>
-            <BrowserRouter>
-                <AuthProvider>
-                    <Suspense>
-                        <Routes>
-                            <Route path='/auth' element={<Auth />} />
-                            <Route path='/' element={<Home/>} />
-                            <Route path='/booking' element={<Order />} />
-                            <Route path='/userinfo' element={<UserInfo />} />
-                            <Route path='/orderconfirm' element={<OrderConfirm />} />
-                        </Routes>
-                    </Suspense>
-                </AuthProvider>
-            </BrowserRouter >
+            <Provider store={store}>
+                <BrowserRouter>
+                    <AuthProvider>
+                        <Suspense>
+                            <Routes>
+                                <Route path='/auth' element={<Auth/>}/>
+                                <Route path='/' element={<Home/>}/>
+                                <Route path='/booking' element={<Order/>} />
+                                {/*<Route path='/userinfo' element={<UserInfo/>}/>*/}
+
+                                <Route path='/confirm' element={<PrivateRoute/>}>
+                                    <Route path=':orderCode' element={<OrderConfirm/>}/>
+                                </Route>
+
+                            </Routes>
+                        </Suspense>
+
+                    </AuthProvider>
+                </BrowserRouter>
+            </Provider>
         </>
     )
 }

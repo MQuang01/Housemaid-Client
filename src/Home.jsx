@@ -6,11 +6,11 @@ import Footer from "./components/footer/Footer";
 import {accessToken} from "./service/AuthService";
 
 function Home() {
+
     return (
         <div className="App">
 
             <Navbar />
-
             <Slide/>
             <Category/>
             <TablePrice/>
