@@ -1,0 +1,9 @@
+.table-price .btn-custom {
+    font-size: 16px;
+    padding: 10px 20px;
+}
+
+.table-price .active {
+    background-color: #1a1a00;
+    color: #fdf334;
+}

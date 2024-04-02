@@ -5,11 +5,13 @@ export const formatMinutesToHHMM = (totalMinutes) => {
     const formattedMinutes = String(minutes).padStart(2, '0');
     return `${formattedHours}:${formattedMinutes}`;
 };
-
 export const formatMinutesToDetail = (totalMinutes) => {
     // 185 => 2h 5 phút
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
+    if (hours === 0) {
+        return `${minutes} phút`;
+    }
     const formattedHours = String(hours).padStart(2, '0');
     const formattedMinutes = String(minutes).padStart(2, '0');
     return `${formattedHours} tiếng ${formattedMinutes} phút`;

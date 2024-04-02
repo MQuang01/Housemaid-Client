@@ -34,20 +34,20 @@ const schema = yup.object({
         .required("Yêu cầu nhập ngày sinh")
         .max(new Date(), "Ngày phải nhỏ hơn ngày hiện tại").typeError("Vui lòng chọn ngày"),
     username: yup.string().required("Yêu cầu nhập tài khoản")
-        .min(6, "Tài khoản ít nhất 4 ký tự")
+        .min(6, "Tài khoản ít nhất 6 ký tự")
         .max(20, "Tài khoản không được vượt quá 16 ký tự")
         .matches(/^\w+$/, "Tài khoản chỉ được chứa chữ cái, số và dấu gạch dưới"),
     password: yup.string().required("Yêu cầu nhập mật khẩu")
         .min(6, "Mật khẩu ít nhất 6 kí tự"),
     confirmPassword: yup.string().required("Yêu cầu xác nhận mật khẩu")
         .oneOf([yup.ref("password")], "Mật khẩu không khớp"),
-    gender: yup.string().required("Vui lòng chọn giới tính"),
+    gender: yup.string().oneOf(["MALE", "FEMALE", "OTHER"]).nullable().required("Vui lòng chọn giới tính"),
 })
 
-const RegisterForm = () => {
+const RegisterForm = ({ setMode }) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFile, setSelectedFile] = useState();
     const [typeUser, setTypeUser] = useState('CUSTOMER');
     const [shift, setShift] = useState("SHIFT_1")
     const [isShowPassword, setIsShowPassword] = useState(false);
@@ -56,7 +56,8 @@ const RegisterForm = () => {
         register,
         handleSubmit,
         formState: {errors},
-        reset
+        reset,
+        resetField
     } = useForm({
         resolver: yupResolver(schema)
     })
@@ -81,21 +82,25 @@ const RegisterForm = () => {
 
         try {
             const response = await fetchRegister(form);
-            console.log(response);
-            navigate("/auth?mode=register");
-            toastr.success("Register successfully");
+            toastr.success("Đăng ký tài khoản thành công, xin vui lòng đăng nhập");
+            navigate("/auth?mode=login")
             reset();
         } catch (error) {
-            toastr.error(error.message); // Hiển thị thông báo lỗi từ máy chủ
+            toastr.error("Lỗi: " + error.message); // Hiển thị thông báo lỗi từ máy chủ
+            resetField("password")
+            resetField("confirmPassword")
         } finally {
             setLoading(false); // Tắt trạng thái loading sau khi xử lý hoàn tất (bất kể thành công hay thất bại)
         }
     }
 
-
+    const CheckValidateImg = () => {
+        if(selectedFile === undefined) {
+            setSelectedFile(null)
+        }
+    }
     return (
         <div className='col-lg-7 mb-4'>
-
             <div className='row align-items-center justify-content-center h-100 g-0 px-4 px-sm-0'>
                 <div className='col col-sm-6 col-lg-7 col-xl-10'>
                     <Link to={"/"} className="d-flex justify-content-center mb-4">
@@ -118,6 +123,7 @@ const RegisterForm = () => {
                             <div className="col-lg-8 form-group has-validation">
                                 <label className="ms-2 mb-2 title-input">Bạn đăng ký với tư cách</label>
                                 <select
+                                    defaultValue={typeUser}
                                     className={`form-select ${errors.typeUser ? 'is-invalid' : ''}`}
                                     {...register("typeUser")}
                                     onChange={(e) => setTypeUser(e.target.value)}>
@@ -127,15 +133,17 @@ const RegisterForm = () => {
                                 <span className="text-danger">{errors.typeUser?.message}</span>
                             </div>
                             <div className="col-lg-4 form-group has-validation">
-                                <label className="ms-1 mb-2 title-input">Avatar</label>
+                                <label className="ms-1 mb-2 title-input">Hình ảnh avatar</label>
                                 <input
                                     type="file"
-                                    className="form-control"
+                                    className={`form-control ${selectedFile === null ? "is-invalid" : ""}`}
                                     accept="image/*" // Chỉ chấp nhận file ảnh
                                     onChange={handleFileChange}
                                 />
+                                <span className="invalid-feedback">{selectedFile === null && "Vui lòng chọn ảnh cho tài khoản"}</span>
                                 {selectedFile != null && (
-                                    <img className={"w-50"} style={{marginTop: 12, marginLeft: 40}} src={URL.createObjectURL(selectedFile)} alt={"avatar"} />
+                                    <img className={"w-50"} style={{marginTop: 12, marginLeft: 40}}
+                                         src={URL.createObjectURL(selectedFile)} alt={"avatar"}/>
                                 )}
                             </div>
                         </div>
@@ -151,7 +159,7 @@ const RegisterForm = () => {
                                                 type="radio"
                                                 id="shift_1"
                                                 name="optionsShift"
-                                                value="SHIFT_1"
+                                                defaultValue="SHIFT_1"
                                                 checked={shift === "SHIFT_1"}
                                                 onChange={(e) => setShift(e.target.value)}
                                             />
@@ -169,7 +177,7 @@ const RegisterForm = () => {
                                                 id="shift_2"
                                                 {...register("shift", {required: true})}
                                                 name="optionsShift"
-                                                value="SHIFT_2"
+                                                defaultValue="SHIFT_2"
                                                 onChange={(e) => setShift(e.target.value)}
                                             />
                                             <label className="form-check-label" htmlFor="shift_2">CA 2</label>
@@ -186,7 +194,7 @@ const RegisterForm = () => {
                                                 id="shift_3"
                                                 {...register("shift", {required: true})}
                                                 name="optionsShift"
-                                                value="SHIFT_3"
+                                                defaultValue="SHIFT_3"
                                                 onChange={(e) => setShift(e.target.value)}
                                             />
                                             <label className="form-check-label" htmlFor="shift_3">CA 3</label>
@@ -204,7 +212,7 @@ const RegisterForm = () => {
                                                 {...register("shift", {required: true})}
                                                 name="optionsShift"
                                                 onChange={(e) => setShift(e.target.value)}
-                                                value="SHIFT_4"
+                                                defaultValue="SHIFT_4"
                                             />
                                             <label className="form-check-label" htmlFor="shift_1">TOÀN THỜI GIAN</label>
                                         </div>
@@ -225,14 +233,14 @@ const RegisterForm = () => {
 
                             <div className="col-lg-6 form-group has-validation">
                                 <label className="ms-2 mb-2 title-input">Giới tính </label>
-                                <div>
+                                <div className={`${errors?.gender?.message ? "is-invalid" : ""}`}>
                                     <div className="form-check form-check-inline">
                                         <input
                                             className="form-check-input"
                                             type="radio"
                                             {...register("gender", {required: true})}
                                             id="maleGender"
-                                            value="MALE"
+                                            defaultValue="MALE"
                                         />
                                         <label className="form-check-label" htmlFor="maleGender">Nam</label>
                                     </div>
@@ -243,7 +251,7 @@ const RegisterForm = () => {
                                             type="radio"
                                             {...register("gender", {required: true})}
                                             id="femaleGender"
-                                            value="FEMALE"
+                                            defaultValue="FEMALE"
                                         />
                                         <label className="form-check-label" htmlFor="femaleGender">Nữ</label>
                                     </div>
@@ -253,12 +261,12 @@ const RegisterForm = () => {
                                             type="radio"
                                             {...register("gender", {required: true})}
                                             id="otherGender"
-                                            value="OTHER"
+                                            defaultValue="OTHER"
                                         />
                                         <label className="form-check-label" htmlFor="otherGender">Khác</label>
                                     </div>
                                 </div>
-                                <span className="invalid-feedback">{errors?.fullName?.message}</span>
+                                <span className="invalid-feedback">{errors?.gender?.message}</span>
                             </div>
                         </div>
 
@@ -339,7 +347,7 @@ const RegisterForm = () => {
                             <div className="form-check">
                                 <input type="checkbox" className="form-check-input" id="formCheck"/>
                                 <label form="formCheck" className="form-check-label text-secondary">
-                                    <small>Chấp nhận các điều khoản</small>
+                                    <small>Chấp nhận các điều khoản của công ty House Maid</small>
                                 </label>
                             </div>
                         </div>
@@ -348,6 +356,7 @@ const RegisterForm = () => {
                         <div className="mb-2 row d-flex justify-content-center">
                             <button
                                 className="button-32 btn-primary btn-lg w-50 mb-3 text-uppercase d-flex justify-content-center"
+                                onClick={CheckValidateImg}
                                 type="submit">
                                 Đăng ký
                             </button>
