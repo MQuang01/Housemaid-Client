@@ -177,6 +177,8 @@ const TablePrice = () => {
                                 <div className="bg-primary py-3 px-5 text-center rounded-top border-bottom border-dark">
                                     <h2 className="m-0">BẢNG GIÁ DỊCH VỤ VỆ SINH</h2>
                                 </div>
+                                <div style={{ height: "700px", overflow: "auto"}}>
+
                                 <table className="border table table-light table-hover text-center">
                                     <thead>
                                     <tr>
@@ -320,6 +322,7 @@ const TablePrice = () => {
                                     </tbody>
                                 </table>
 
+                                </div>
                             </div>
                         </div>
                     </div>

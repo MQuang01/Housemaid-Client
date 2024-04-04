@@ -10,8 +10,9 @@ import {
     formatMinutesToDetail,
     formatMinutesToHHMM,
     formatYYYYMMDDToDDMMYYYY,
-    getTimeNow,
-    parseTimeString
+    getTimeNow, newTomorrow,
+    parseTimeString, parseTimeToMinutes, sumTime
+
 } from "../../until/FormatTime";
 import {
     AMOUNT_TYPE,
@@ -23,6 +24,7 @@ import {useAuth} from "../../context/AuthContext";
 import {fetchCreateOrder} from "../../service/OrderService";
 import ModalConfirm from "./ModalConfirm";
 import LoadingModal from "../loading/LoadingModal";
+import {date} from "yup";
 
 
 const Order = () => {
@@ -41,7 +43,8 @@ const Order = () => {
         totalPrice: null,
         quantityEmployee: null,
         workDay: null,
-        timeStart: null,
+        startTime: null,
+        endTime: null,
         listOrderDetail: [{
             jobId: null,
             timeApprox: null,
@@ -51,21 +54,21 @@ const Order = () => {
     }
 
     const [currentForm, setCurrentForm] = useState(1);
-    const [selectedTime, setSelectedTime] = useState({start: getTimeNow(), end: '24:00'});
 
-
-    const [listJob, setListJob] = useState(JSON.parse(localStorage.getItem('listJob')) || []);
+    const [listJob, setListJob] = useState(JSON.parse(localStorage.getItem('listJob' + categoryId) || '[]'));
 
     // state for form 2
     const [listEmployee, setListEmployee] = useState([]);
     const [infoForm2, setInfoForm2] = useState(JSON.parse(localStorage.getItem('infoForm2')) || {
-        limitEmployee: 1,
-        workDay: new Date().toISOString().split('T')[0],
-        timeStart: selectedTime.start,
+        workDay: newTomorrow(),
+        startTime: "00:00",
+        endTime: "23:59",
         note: ''
     });
+
+    const [limitEmployee, setLimitEmployee] = useState(JSON.parse(localStorage.getItem('quantityEmployee' + categoryId) || 1));
     const [isConfirmPolicy, setIsConfirmPolicy] = useState(JSON.parse(localStorage.getItem('confirmPolicy') || 'false'));
-    const [messageWarning, setMessageWarning] = useState('');
+    const [messageWarning, setMessageWarning] = useState(localStorage.getItem('messageWarning') || '');
 
     // state for form 3
     const [infoForm3, setInfoForm3] = useState({
@@ -78,24 +81,25 @@ const Order = () => {
     const [show, setShowModalConfirm] = useState(false);
     // state for calculate
     const [totalPriceRaw, setTotalPriceRaw] = useState(0);
-    const [timeApprox, setTimeApprox] = useState(JSON.parse(localStorage.getItem('timeApprox')) || 0);
+    const [timeApprox, setTimeApprox] = useState(JSON.parse(localStorage.getItem('timeApprox' + categoryId) || 0));
 
 
     useEffect(() => {
-        console.log(categoryId)
         if (categoryId == null) {
             window.location.href = '/';
         }
 
-        fetchJobByCategoryId(categoryId).then(data => {
-            const formattedData = data.map(item => ({
-                ...item,
-                quantity: 1,
-                houseSize: 1,
-                checked: false
-            }));
-            setListJob(formattedData);
-        });
+        if (listJob.length === 0) {
+            fetchJobByCategoryId(categoryId).then(data => {
+                const formattedData = data.map(item => ({
+                    ...item,
+                    quantity: 1,
+                    houseSize: 1,
+                    checked: false
+                }));
+                setListJob(formattedData);
+            });
+        }
 
         fetchListEmployee().then(data => {
             setListEmployee(data.content);
@@ -161,6 +165,7 @@ const Order = () => {
             return total;
         }, 0);
         setTimeApprox(totalTime);
+        console.log(totalTime)
     };
     const handleCheckboxChange = (event, jobId) => {
         const updatedJobChecked = listJob.map(e => {
@@ -170,85 +175,88 @@ const Order = () => {
             return e;
         })
         setListJob(updatedJobChecked);
+
     };
-    const handleTimeChange = (event) => {
-        const selectedValue = event.target.value;
-        const selectedHour = Math.floor(selectedValue / 2);
-        const selectedMinutes = selectedValue % 2 === 0 ? '00' : '30';
-        const formattedTimeStart = `${selectedHour}:${selectedMinutes}`;
-
-        const endTime = calculateEndTime(formattedTimeStart, formatMinutesToHHMM(timeApprox));
-
-
-        setSelectedTime({start: formattedTimeStart, end: endTime});
-
-        setInfoForm2({...infoForm2, timeStart: formattedTimeStart})
-    };
-
-    // update localstorage
     useEffect(() => {
-        localStorage.setItem("timeApprox", JSON.stringify(timeApprox));
-        const storageInfoForm2 = JSON.parse(localStorage.getItem('infoForm2'));
-        if (storageInfoForm2 !== null) {
-            if (storageInfoForm2.timeStart !== 0) {
-                setSelectedTime({
-                    start: storageInfoForm2.timeStart,
-                    // ...selectedTime
-                    end: calculateEndTime(parseTimeString(storageInfoForm2.timeStart), formatMinutesToHHMM(timeApprox))
-                });
-            }
-        }
-
-        if (timeApprox <= 180) {
-            setMessageWarning("");
-        } else {
-            let minEmployeeCount = 2;
-            if (timeApprox >= 360) {
-                minEmployeeCount = 3;
-            }
-
-            if (infoForm2.limitEmployee < minEmployeeCount) {
-                setMessageWarning(`Khuyến khích: Chọn ${minEmployeeCount} nhân viên trở lên`);
-            } else {
-                setMessageWarning("");
-            }
-        }
-    }, [timeApprox, infoForm2.limitEmployee]);
-    useEffect(() => {
-        localStorage.setItem('listJob', JSON.stringify(listJob));
+        localStorage.setItem('listJob' + categoryId, JSON.stringify(listJob));
     }, [listJob])
     useEffect(() => {
         localStorage.setItem('infoForm2', JSON.stringify(infoForm2));
     }, [infoForm2])
     useEffect(() => {
-        localStorage.setItem("totalOrderPrice", JSON.stringify(totalPriceRaw));
+        localStorage.setItem("totalOrderPrice" + categoryId, JSON.stringify(totalPriceRaw));
     }, [totalPriceRaw]);
     useEffect(() => {
         localStorage.setItem("confirmPolicy", JSON.stringify(isConfirmPolicy));
     }, [timeApprox, isConfirmPolicy]);
+    useEffect(() => {
+        localStorage.setItem('quantityEmployee' + categoryId, JSON.stringify(limitEmployee));
+        checkSelectedEmployees()
+    }, [infoForm2, limitEmployee]);
+    useEffect(() => {
+        localStorage.setItem('messageWarning', JSON.stringify(messageWarning));
+    }, [messageWarning])
+
+
+    function checkSelectedEmployees() {
+        if (currentForm !== 2) return
+        if (infoForm2.endTime < infoForm2.startTime) {
+            toastr.error("Thời gian không hợp lệ", "Vui lòng chọn lại");
+            return
+        }
+
+        const timeDifference = parseTimeToMinutes(infoForm2.endTime) - parseTimeToMinutes(infoForm2.startTime);
+
+        if (timeDifference === 0) {
+            setMessageWarning('');
+            toastr.error("Thời gian không hợp lệ", "Vui lòng chọn lại");
+            return
+        }
+        const numberEmployee = Math.ceil(timeApprox / timeDifference);
+        if (numberEmployee > listEmployee.length) {
+            toastr.error("Thời gian không hợp lệ hoặc số lượng nhân viên không đủ", "Vui lòng chọn lại");
+            return;
+        }
+        console.log(limitEmployee, numberEmployee)
+        if (limitEmployee >= numberEmployee) {
+            setMessageWarning('');
+            return
+        }
+
+        if (numberEmployee > 1) {
+            setMessageWarning(`Khuyến khích chọn từ ${numberEmployee} nhân viên trở lên`);
+        } else {
+            setMessageWarning('');
+        }
+
+    }
 
 
     const handleNextForm = () => {
         if (currentForm === 1) {
+
             if (!hasJobChecked) {
                 toastr.error("Vui lòng chọn ít nhất 1 dịch vụ", "Cảnh báo");
                 return;
             } else {
                 setCurrentForm(currentForm + 1);
+
             }
         }
         if (currentForm === 2) {
+            if (infoForm2.startTime === infoForm2.endTime) {
+                toastr.error("Chọn thời gian phù hợp")
+                return;
+            }
             // console.log(new Date().toISOString().split('T')[0], infoForm2.workDay)
-            if (compareTimeString(new Date().toISOString().split('T')[0], infoForm2.workDay) > 0) {
+            if (compareTimeString(infoForm2.workDay) > 0) {
                 // toastr.error("Thời gian phải hợp hơn thống")
                 toastr.error("Chọn thời gian phù hợp")
                 return;
             }
-            if (compareTimeString(new Date().toISOString().split('T')[0], infoForm2.workDay) === 0) {
-                if (compareTime(infoForm2.timeStart, getTimeNow()) < 0) {
-                    toastr.error("Chọn thời gian phù hợp")
-                    return;
-                }
+            if (compareTime(infoForm2.startTime) < 0) {
+                toastr.error("Chọn thời gian phù hợp")
+                return;
             }
             if (!isConfirmPolicy) {
                 toastr.error("Vui lòng xác nhận điều khoản", "Cảnh báo");
@@ -295,10 +303,6 @@ const Order = () => {
         }
     };
 
-    const setSelectedEmployee = (event) => {
-        const selectedValue = event.target.value;
-        setInfoForm2({...infoForm2, limitEmployee: selectedValue})
-    }
 
     function handleDateChange(e) {
         const selectedValue = e.target.value;
@@ -331,8 +335,9 @@ const Order = () => {
         initialOrder.address = infoForm3.address
         initialOrder.totalPrice = totalPriceRaw;
         initialOrder.totalTimeApprox = timeApprox;
-        initialOrder.timeStart = infoForm2.timeStart;
-        initialOrder.quantityEmployee = infoForm2.limitEmployee;
+        initialOrder.startTime = infoForm2.startTime;
+        initialOrder.endTime = infoForm2.endTime;
+        initialOrder.quantityEmployee = limitEmployee;
         initialOrder.workDay = infoForm2.workDay;
         initialOrder.listOrderDetail = listJob.filter(e => e.checked)
             .map(e => {
@@ -366,7 +371,7 @@ const Order = () => {
             localStorage.removeItem("timeApprox");
             localStorage.removeItem("infoForm2");
             localStorage.removeItem("totalOrderPrice");
-            localStorage.setItem("quantityEmployee", infoForm2.limitEmployee);
+            // localStorage.setItem("quantityEmployee", limitEmployee);
         } catch (error) {
             if (error.response.data === "") {
                 toastr.error("Lỗi không xác định")
@@ -446,7 +451,7 @@ const Order = () => {
                                                 <td>{job.name}</td>
                                                 <td className="text-end px-5">{formatMoney(job.price)}</td>
                                                 <td className="text-end px-5">~{job.timeApprox} phút
-                                                    /{job.typeJob === "Quantity" ? "1 cái" : "m2"}</td>
+                                                    /{job.typeJob === "Quantity" ? "lần" : "m2"}</td>
                                                 <td className="d-flex align-items-center justify-content-center">
                                                     <input
                                                         className="form-check-input"
@@ -529,53 +534,59 @@ const Order = () => {
                                             Số lượng nhân viên:
                                         </label>
                                         <select id="employee" className="form-select" style={{width: '200px'}}
-                                                onChange={(event) => setSelectedEmployee(event)}>
+                                                onChange={(event) => setLimitEmployee(event.target.value)}>
                                             <option
-                                                value={infoForm2.limitEmployee}
-                                                defaultChecked={infoForm2.limitEmployee !== 1}
+                                                value={limitEmployee}
+                                                defaultChecked={limitEmployee !== 1}
                                             >
-                                                {infoForm2.limitEmployee}
+                                                {limitEmployee}
                                             </option>
-                                            {options.filter((option) => option !== parseInt(infoForm2.limitEmployee)).map((option) => (
+                                            {options.filter((option) => option !== parseInt(limitEmployee)).map((option) => (
                                                 <option key={option} value={option}>{option}</option>
                                             ))}
                                         </select>
                                     </div>
                                     <div className="col-md-6">
-                                        {messageWarning !== "" && <div className="alert alert-warning">
+                                        {messageWarning !== '' && <div className="alert alert-warning">
                                             {messageWarning}
                                             <label className="form-text text-danger">
-                                                * Lưu ý: Ý kiến tham khảo mang tính chất hỗ trợ vệ sinh nhà hoặc căn hộ
+                                                *Lưu ý: Ý kiến mang tính chất hỗ trợ vệ sinh nhà hoặc căn hộ.
+                                            </label>
+                                            <label className="ms-5 form-text text-danger">
+                                                Ý kiến đưa ra được ước tính, có thể chênh lệch.
                                             </label>
                                         </div>}
-
                                     </div>
                                 </div>
                                 <div className="row g-2 mt-3">
-                                    <div className="col-md-6">
-                                        <label htmlFor="time">Thời gian bắt đầu làm việc:</label>
-                                        <div
-                                            className="text-center mt-2 fw-bold text-success fs-4">{selectedTime.start} - {selectedTime.end}</div>
-                                        <input
-                                            type="range"
-                                            id="time"
-                                            className="form-range"
-                                            defaultValue={selectedTime.start}
-                                            min={getTimeNow()}
-                                            max={48}
-                                            step={1}
-                                            onChange={(e) => handleTimeChange(e)}
-                                        />
-                                    </div>
+
                                     <div className="col-md-6 ">
                                         <div className="mx-auto" style={{width: '60%'}}>
                                             <label htmlFor="date" style={{marginBottom: '15px'}}>Ngày bắt đầu:</label>
                                             <input type="date" id="date" className="form-control"
-                                                   min={new Date().toISOString().split('T')[0]}
-                                                   value={infoForm2.workDay || new Date().toISOString().split('T')[0]}
+                                                   min={newTomorrow()}
+                                                   value={infoForm2.workDay || newTomorrow()}
                                                    onChange={(e) => handleDateChange(e)}/>
                                         </div>
 
+                                    </div>
+                                    <div className="d-flex gap-4 col-md-6">
+                                        <div className="mx-auto" style={{width: '60%'}}>
+                                            <label htmlFor="time">Thời gian bắt đầu:</label>
+                                            <input type="time" id="time" value={infoForm2.startTime}
+                                                   onChange={(e) => setInfoForm2({
+                                                       ...infoForm2,
+                                                       startTime: e.target.value
+                                                   })}
+                                                   className="form-control"/>
+                                            <label htmlFor="time">Thời gian kết thúc:</label>
+                                            <input type="time" id="time" value={infoForm2.endTime}
+                                                   onChange={(e) => setInfoForm2({
+                                                       ...infoForm2,
+                                                       endTime: e.target.value
+                                                   })}
+                                                   className="form-control"/>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="row g-2 mt-3">
@@ -597,9 +608,6 @@ const Order = () => {
                                                     Chúng tôi cam kết hỗ trợ trang thiết bị vệ sinh và cơ sở vật
                                                     chất liên quan.
                                                 </div>
-                                                <div className="form-text text-danger mb-3">
-                                                    Ngoại trừ...
-                                                </div>
                                                 <div className="form-text">
                                                     <label>
                                                         (*) Điều khoản về thanh toán:
@@ -609,7 +617,8 @@ const Order = () => {
                                                             (i) Tiền lương hàng tháng của người lao động
                                                         </label>
                                                         <label>
-                                                            (ii) [Phí thành viên Housemaid] chỉ thông qua (các) nền tảng
+                                                            (ii) [Phí thành viên Housemaid] chỉ thông qua (các) nền
+                                                            tảng
                                                             trực tuyến
                                                             của Housemaid.
                                                         </label>
@@ -777,7 +786,7 @@ const Order = () => {
                                                 <div className="col-md-8">
                                                     <div className="input-group input-group-merge">
                                                         <input type="text" className="form-control text-success fw-bold"
-                                                               value={infoForm2.limitEmployee} readOnly/>
+                                                               value={limitEmployee} readOnly/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -800,7 +809,7 @@ const Order = () => {
                                                 <div className="col-md-8">
                                                     <div className="input-group input-group-merge">
                                                         <input type="text" className="form-control text-success fw-bold"
-                                                               value={`${infoForm2.timeStart}, ${formatYYYYMMDDToDDMMYYYY(infoForm2.workDay)}`}
+                                                               value={`${infoForm2.startTime}, ${formatYYYYMMDDToDDMMYYYY(infoForm2.workDay)}`}
                                                                readOnly/>
                                                     </div>
                                                 </div>
@@ -857,7 +866,8 @@ const Order = () => {
                           handleConfirmOrder={handleConfirmOrder}></ModalConfirm>
             <Footer/>
             <LoadingModal loading={loading}/>
-        </>);
+        </>
+    );
 }
 export default Order;
 
