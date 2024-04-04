@@ -6,10 +6,11 @@ import {fetchJobByCategoryId} from "../../service/JobService";
 import {formatMoney} from "../../until/FormatMoney";
 import toastr from "toastr";
 import {
+    compareTimeString,
     formatMinutesToDetail,
     formatMinutesToHHMM,
     formatYYYYMMDDToDDMMYYYY,
-    getTimeNow, parseStringToDate,
+    getTimeNow,
     parseTimeString
 } from "../../until/FormatTime";
 import {
@@ -21,6 +22,7 @@ import {fetchListEmployee} from "../../service/EmployeeService";
 import {useAuth} from "../../context/AuthContext";
 import {fetchCreateOrder} from "../../service/OrderService";
 import ModalConfirm from "./ModalConfirm";
+import LoadingModal from "../loading/LoadingModal";
 
 
 const Order = () => {
@@ -30,7 +32,7 @@ const Order = () => {
     const categoryId = state?.idCate;
     const {isLoggedIn, logout} = useAuth();
     const [dataUser, setDataUser] = useState(JSON.parse(localStorage.getItem("infoUser")) || {});
-
+    const [loading, setLoading] = useState(false);
     const initialOrder = {
         userId: null,
         categoryId: null,
@@ -58,7 +60,7 @@ const Order = () => {
     const [listEmployee, setListEmployee] = useState([]);
     const [infoForm2, setInfoForm2] = useState(JSON.parse(localStorage.getItem('infoForm2')) || {
         limitEmployee: 1,
-        workDay: new Date().toISOString().slice(0, 10),
+        workDay: new Date().toISOString().split('T')[0],
         timeStart: selectedTime.start,
         note: ''
     });
@@ -79,23 +81,21 @@ const Order = () => {
     const [timeApprox, setTimeApprox] = useState(JSON.parse(localStorage.getItem('timeApprox')) || 0);
 
 
-
     useEffect(() => {
+        console.log(categoryId)
         if (categoryId == null) {
             window.location.href = '/';
         }
 
-        if (listJob.length === 0) {
-            fetchJobByCategoryId(categoryId).then(data => {
-                const formattedData = data.map(item => ({
-                    ...item,
-                    quantity: 1,
-                    houseSize: 1,
-                    checked: false
-                }));
-                setListJob(formattedData);
-            });
-        }
+        fetchJobByCategoryId(categoryId).then(data => {
+            const formattedData = data.map(item => ({
+                ...item,
+                quantity: 1,
+                houseSize: 1,
+                checked: false
+            }));
+            setListJob(formattedData);
+        });
 
         fetchListEmployee().then(data => {
             setListEmployee(data.content);
@@ -238,22 +238,13 @@ const Order = () => {
             }
         }
         if (currentForm === 2) {
-            // if (parseStringToDate(new Date(formatDateString)) === parseStringToDate(infoForm2.workDay)) {
-            //     if (compareTime(infoForm2.timeStart, getTimeNow()) < 0){
-            //         toastr.error("Chọn thời gian phù hợp")
-            //     }
-            //     return;
-            // }
-            // if (parseStringToDate(new Date(formatDateString)) > parseStringToDate(infoForm2.workDay)) {
-            //     toastr.error("Chọn thời gian phù hợp")
-            //     return;
-            // }
-
-            if (new Date() > parseStringToDate(infoForm2.workDay)) {
+            // console.log(new Date().toISOString().split('T')[0], infoForm2.workDay)
+            if (compareTimeString(new Date().toISOString().split('T')[0], infoForm2.workDay) > 0) {
+                // toastr.error("Thời gian phải hợp hơn thống")
                 toastr.error("Chọn thời gian phù hợp")
                 return;
             }
-            if (new Date() === parseStringToDate(infoForm2.workDay)) {
+            if (compareTimeString(new Date().toISOString().split('T')[0], infoForm2.workDay) === 0) {
                 if (compareTime(infoForm2.timeStart, getTimeNow()) < 0) {
                     toastr.error("Chọn thời gian phù hợp")
                     return;
@@ -319,6 +310,7 @@ const Order = () => {
     }
 
     async function handleConfirmOrder() {
+
         if (!isLoggedIn) {
             if (window.confirm("Vui lòng đăng nhập trước khi đặt dịch vụ. Thông tin sẽ được chúng tôi lưu lại")) {
                 window.location.href = "/auth?mode=login";
@@ -332,6 +324,8 @@ const Order = () => {
             }, 1500);
             return;
         }
+        setLoading(true);
+
         initialOrder.userId = dataUser?.id;
         initialOrder.categoryId = categoryId;
         initialOrder.address = infoForm3.address
@@ -382,8 +376,11 @@ const Order = () => {
                 console.log(error)
             }
             toastr.error(error.response.data); // Hiển thị thông báo lỗi từ máy chủ
+        } finally {
+            setLoading(false); // Tắt trạng thái loading sau khi xử lý hoàn tất (bất kể thành công hay thất bại)
         }
     }
+
     function getAmount(job) {
         if (job.typeJob === "Quantity") {
             return parseInt(job.quantity);
@@ -396,7 +393,6 @@ const Order = () => {
     function handleEditAddress(e) {
         setInfoForm3({...infoForm3, address: e.target.value})
     }
-
 
 
     return (
@@ -450,7 +446,7 @@ const Order = () => {
                                                 <td>{job.name}</td>
                                                 <td className="text-end px-5">{formatMoney(job.price)}</td>
                                                 <td className="text-end px-5">~{job.timeApprox} phút
-                                                    /{job.type === "Quantity" ? "1 cái" : "m2"}</td>
+                                                    /{job.typeJob === "Quantity" ? "1 cái" : "m2"}</td>
                                                 <td className="d-flex align-items-center justify-content-center">
                                                     <input
                                                         className="form-check-input"
@@ -857,8 +853,10 @@ const Order = () => {
                     </div>
                 </div>
             </div>
-            <ModalConfirm show={show} setShow={setShowModalConfirm} handleConfirmOrder={handleConfirmOrder} ></ModalConfirm>
+            <ModalConfirm show={show} setShow={setShowModalConfirm}
+                          handleConfirmOrder={handleConfirmOrder}></ModalConfirm>
             <Footer/>
+            <LoadingModal loading={loading}/>
         </>);
 }
 export default Order;

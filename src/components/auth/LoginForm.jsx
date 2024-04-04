@@ -50,10 +50,9 @@ const LoginForm = () => {
 
         try {
             const loggedIn = await Login(data.username, data.password);
+
             if (loggedIn) {
-
-
-                let user = await fetchUserByUserName(data.username);
+                await fetchUserByUserName(data.username);
                 login();
                 if (redirectUrl) {
                     navigate(redirectUrl);
