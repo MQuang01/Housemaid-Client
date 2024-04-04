@@ -24,19 +24,16 @@ function App() {
                             <Routes>
                                 <Route path='/auth' element={<Auth/>}/>
                                 <Route path='/' element={<Home/>}/>
-                                <Route path='/booking' element={<Order/>} />
+                                <Route path='/booking' element={<Order/>}/>
                                 {/*<Route path='/userinfo' element={<UserInfo/>}/>*/}
 
                                 <Route path='/confirm/*' element={<PrivateRoute/>}>
                                     <Route path='' element={<OrderConfirm/>}/>
                                     {/*<Route path=':orderCode' element={<OrderConfirm/>}/>*/}
                                 </Route>
-
-                                {/*<Route*/}
-                                {/*    path="/confirm/:orderCode/userId=:userId"*/}
-                                {/*    element={<PrivateRoute><OrderConfirm /></PrivateRoute>}*/}
-                                {/*/>*/}
-
+                                <Route path='/profile' element={<PrivateRoute/>}>
+                                    <Route path='' element={<UserInfo/>}/>
+                                </Route>
                             </Routes>
                         </Suspense>
 

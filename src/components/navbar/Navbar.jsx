@@ -8,7 +8,6 @@ const Navbar = () => {
     const [dataUser, setDataUser] = useState( {}) ;
 
     useEffect(() => {
-        console.log("22", localStorage.getItem("infoUser"))
         if(localStorage.getItem("infoUser")) {
             setDataUser(JSON.parse(localStorage.getItem("infoUser")));
         }
@@ -85,7 +84,7 @@ const Navbar = () => {
                                              alt="user.png" style={{width: 50, height: 40}}/>
                                     </a>
                                     <div className="dropdown-menu m-0 bg-primary">
-                                        <a href="#" className="dropdown-item">Trang cá nhân</a>
+                                        <a href="/profile" className="dropdown-item">Trang cá nhân</a>
                                         <a href="#" className="dropdown-item" onClick={handleLogout}>Đăng xuất</a>
                                     </div>
                                 </div>
