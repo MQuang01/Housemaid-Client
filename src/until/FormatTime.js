@@ -58,8 +58,46 @@ export const getTimeNow = () =>{
     return `${hours}:${minutes}`
 }
 
-export const compareTimeString = (dateString1, dateString2) =>{
-    const date1 = new Date(dateString1);
-    const date2 = new Date(dateString2);
-    return date1 - date2
+export function sumTime(time1, time2) {
+    const [hour1, minute1] = time1.split(':').map(Number);
+    const [hour2, minute2] = time2.split(':').map(Number);
+
+    let totalHour = hour1 + hour2;
+    let totalMinute = minute1 + minute2;
+
+    if (totalMinute >= 60) {
+        totalHour += Math.floor(totalMinute / 60);
+        totalMinute = totalMinute % 60;
+    }
+
+    return `${totalHour}:${totalMinute < 10 ? '0' : ''}${totalMinute}`;
+}
+
+export const compareTimeString = (dateString) =>{
+    const date1 = new Date();
+    const date2 = new Date(dateString);
+
+    date1.setHours(0, 0, 0, 0);
+    date2.setHours(0, 0, 0, 0);
+
+    // So sánh các đối tượng Date
+    return date1 - date2;
+}
+
+export const parseTimeToMinutes = (time) =>{
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+export const newTomorrow = () =>{
+    const today = new Date(); // Lấy ngày và giờ hiện tại
+    const tomorrow = new Date(today); // Tạo một bản sao của ngày hiện tại
+    tomorrow.setDate(today.getDate() + 1); // Thêm 1 vào phần ngày của bản sao
+
+// Lấy ngày, tháng và năm của ngày hôm sau
+    const tomorrowDay = tomorrow.getDate();
+    const tomorrowMonth = tomorrow.getMonth() + 1; // Lưu ý: Tháng bắt đầu từ 0 nên cần cộng thêm 1
+    const tomorrowYear = tomorrow.getFullYear();
+
+    return `${tomorrowYear}-${tomorrowMonth < 10 ? '0' : ''}${tomorrowMonth}-${tomorrowDay < 10 ? '0' : ''}${tomorrowDay}`
 }

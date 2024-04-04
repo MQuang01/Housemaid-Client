@@ -50,7 +50,6 @@ const RegisterForm = ({setMode}) => {
     const [loading, setLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState();
     const [typeUser, setTypeUser] = useState('CUSTOMER');
-    const [shift, setShift] = useState("SHIFT_1")
     const [isShowPassword, setIsShowPassword] = useState(false);
     const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
 
@@ -91,10 +90,9 @@ const RegisterForm = ({setMode}) => {
         data.dob = date.toISOString().split('T')[0];
         const form = new FormData();
         for (const key in data) {
-            if (key === 'avatar' || key === 'shift') continue
+            if (key === 'avatar') continue
             form.append(key, data[key])
         }
-        form.append("shift", shift)
         form.append('avatar', selectedFile)
 
 
@@ -166,66 +164,6 @@ const RegisterForm = ({setMode}) => {
                                     <img className={"w-50"} style={{marginTop: 12, marginLeft: 40}}
                                          src={URL.createObjectURL(selectedFile)} alt={"avatar"}/>
                                 )}
-                            </div>
-                        </div>
-
-                        <div className="mb-2 row d-flex align-items-center">
-                            <div className="col-lg-12"
-                                 style={{display: typeUser === 'EMPLOYEE' ? 'block' : 'none'}}>
-                                <div className="d-flex form-group has-validation">
-                                    <label className="ms-1 title-input me-2">Ca làm việc</label>
-                                    <div>
-                                        <div className="form-check form-check-inline">
-                                            <input
-                                                className="form-check-input"
-                                                type="radio"
-                                                id="shift_1"
-                                                name="optionsShift"
-                                                defaultValue="SHIFT_1"
-                                                checked={shift === "SHIFT_1"}
-                                                onChange={(e) => setShift(e.target.value)}
-                                            />
-                                            <label className="form-check-label" htmlFor="shift_1">CA 1</label>
-                                        </div>
-                                        <div>
-                                            <small>(6h - 13h)</small>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="form-check form-check-inline">
-                                            <input
-                                                className="form-check-input"
-                                                type="radio"
-                                                id="shift_2"
-                                                {...register("shift", {required: true})}
-                                                name="optionsShift"
-                                                defaultValue="SHIFT_2"
-                                                onChange={(e) => setShift(e.target.value)}
-                                            />
-                                            <label className="form-check-label" htmlFor="shift_2">CA 2</label>
-                                        </div>
-                                        <div>
-                                            <small>(13h - 20h)</small>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="form-check form-check-inline">
-                                            <input
-                                                className="form-check-input"
-                                                type="radio"
-                                                id="shift_4"
-                                                {...register("shift", {required: true})}
-                                                name="optionsShift"
-                                                onChange={(e) => setShift(e.target.value)}
-                                                defaultValue="SHIFT_4"
-                                            />
-                                            <label className="form-check-label" htmlFor="shift_1">TOÀN THỜI GIAN</label>
-                                            <div>
-                                                <small>(6h - 20h)</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
