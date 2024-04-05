@@ -194,16 +194,12 @@ const Order = () => {
         checkSelectedEmployees()
     }, [infoForm2, limitEmployee]);
     useEffect(() => {
-        localStorage.setItem('messageWarning', JSON.stringify(messageWarning));
+        localStorage.setItem('messageWarning', messageWarning);
     }, [messageWarning])
 
 
     function checkSelectedEmployees() {
         if (currentForm !== 2) return
-        if (infoForm2.endTime < infoForm2.startTime) {
-            toastr.error("Thời gian không hợp lệ", "Vui lòng chọn lại");
-            return
-        }
 
         const timeDifference = parseTimeToMinutes(infoForm2.endTime) - parseTimeToMinutes(infoForm2.startTime);
 
@@ -213,6 +209,7 @@ const Order = () => {
             return
         }
         const numberEmployee = Math.ceil(timeApprox / timeDifference);
+        console.log(numberEmployee)
         if (numberEmployee > listEmployee.length) {
             toastr.error("Thời gian không hợp lệ hoặc số lượng nhân viên không đủ", "Vui lòng chọn lại");
             return;
@@ -251,10 +248,6 @@ const Order = () => {
             // console.log(new Date().toISOString().split('T')[0], infoForm2.workDay)
             if (compareTimeString(infoForm2.workDay) > 0) {
                 // toastr.error("Thời gian phải hợp hơn thống")
-                toastr.error("Chọn thời gian phù hợp")
-                return;
-            }
-            if (compareTime(infoForm2.startTime) < 0) {
                 toastr.error("Chọn thời gian phù hợp")
                 return;
             }
@@ -570,22 +563,24 @@ const Order = () => {
                                         </div>
 
                                     </div>
-                                    <div className="d-flex gap-4 col-md-6">
-                                        <div className="mx-auto" style={{width: '60%'}}>
+                                    <div className="d-flex align-items-center justify-content-between gap-4 col-md-6">
+                                        <div className="" style={{width: '40%'}}>
                                             <label htmlFor="time">Thời gian bắt đầu:</label>
                                             <input type="time" id="time" value={infoForm2.startTime}
                                                    onChange={(e) => setInfoForm2({
                                                        ...infoForm2,
                                                        startTime: e.target.value
                                                    })}
-                                                   className="form-control"/>
+                                                   className="form-control mt-3"/>
+                                        </div>
+                                        <div className="" style={{width: '40%'}}>
                                             <label htmlFor="time">Thời gian kết thúc:</label>
                                             <input type="time" id="time" value={infoForm2.endTime}
                                                    onChange={(e) => setInfoForm2({
                                                        ...infoForm2,
                                                        endTime: e.target.value
                                                    })}
-                                                   className="form-control"/>
+                                                   className="form-control mt-3"/>
                                         </div>
                                     </div>
                                 </div>
