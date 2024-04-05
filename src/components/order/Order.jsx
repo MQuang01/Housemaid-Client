@@ -360,11 +360,11 @@ const Order = () => {
             setTimeout(() => {
                 toastr.success("Hãy kiểm tra mail của bạn", {autoClose: 5000});
             }, 1500)
-            localStorage.removeItem("listJob");
+            localStorage.removeItem("listJob" + categoryId);
             localStorage.removeItem("confirmPolicy");
-            localStorage.removeItem("timeApprox");
+            localStorage.removeItem("timeApprox" + categoryId);
             localStorage.removeItem("infoForm2");
-            localStorage.removeItem("totalOrderPrice");
+            localStorage.removeItem("totalOrderPrice" + categoryId);
             // localStorage.setItem("quantityEmployee", limitEmployee);
         } catch (error) {
             if (error.response.data === "") {
