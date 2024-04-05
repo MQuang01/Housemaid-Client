@@ -37,13 +37,7 @@ const OrderConfirm = () => {
             });
         }
     }, [dataUser]);
-    // useEffect(() => {
-    //     // const params = [];
-    //     // for(let entry of searchParams.entries()) {
-    //     //     params.push(entry);
-    //     // }
-    //     console.log(searchParams.get('userId'));
-    // }, []);
+
     return (
         <>
             <Navbar/>
@@ -128,15 +122,9 @@ const OrderConfirm = () => {
                                                 <h6>{dataOrder.note || ""}</h6>
                                             </div>
                                             <div className="order-info">
-                                                <h6>Tổng thời gian dự tính: </h6>
-                                                <h6>{dataOrder.totalTimeApprox? formatMinutesToDetail(dataOrder.totalTimeApprox) : ""}</h6>
-                                            </div>
-                                            <div className="order-info">
                                                 <h6>Tổng giá tiền: </h6>
                                                 <h6>{dataOrder.total? formatMoney(dataOrder.total) : ""}</h6>
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>

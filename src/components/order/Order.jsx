@@ -241,6 +241,7 @@ const Order = () => {
             }
         }
         if (currentForm === 2) {
+
             if (infoForm2.startTime === infoForm2.endTime) {
                 toastr.error("Chọn thời gian phù hợp")
                 return;
@@ -253,6 +254,13 @@ const Order = () => {
             }
             if (!isConfirmPolicy) {
                 toastr.error("Vui lòng xác nhận điều khoản", "Cảnh báo");
+                return;
+            }
+            if (!isLoggedIn) {
+                if (window.confirm("Vui lòng đăng nhập trước. Thông tin sẽ được chúng tôi lưu lại")) {
+                    window.location.href = "/auth?mode=login";
+                }
+                return;
             } else {
                 setCurrentForm(currentForm + 1);
             }
@@ -307,13 +315,6 @@ const Order = () => {
     }
 
     async function handleConfirmOrder() {
-
-        if (!isLoggedIn) {
-            if (window.confirm("Vui lòng đăng nhập trước khi đặt dịch vụ. Thông tin sẽ được chúng tôi lưu lại")) {
-                window.location.href = "/auth?mode=login";
-            }
-            return;
-        }
         if (listJob.filter(e => e.checked).length === 0) {
             toastr.error("Không thể tạo hóa đơn nếu không có dịch vụ. Chúng tôi sẽ chuyển đến đặt dịch vụ", "Cảnh báo");
             setTimeout(() => {
