@@ -116,15 +116,19 @@ const OrderConfirm = () => {
                                                 <h6>{dataOrder.workDay? formatYYYYMMDDToDDMMYYYY(dataOrder.workDay) : ""}</h6>
                                             </div>
                                             <div className="order-info">
-                                                <h6>Thời gian bắt đầu làm việc: </h6>
+                                                <h6>Thời gian bắt đầu: </h6>
                                                 <h6>{dataOrder.timeStart || ""}</h6>
+                                            </div>
+                                            <div className="order-info">
+                                                <h6>Thời gian kết thúc: </h6>
+                                                <h6>{dataOrder.timeEnd || ""}</h6>
                                             </div>
                                             <div className="order-info">
                                                 <h6>Ghi chú: </h6>
                                                 <h6>{dataOrder.note || ""}</h6>
                                             </div>
                                             <div className="order-info">
-                                                <h6>Tổng thời gian: </h6>
+                                                <h6>Tổng thời gian dự tính: </h6>
                                                 <h6>{dataOrder.totalTimeApprox? formatMinutesToDetail(dataOrder.totalTimeApprox) : ""}</h6>
                                             </div>
                                             <div className="order-info">

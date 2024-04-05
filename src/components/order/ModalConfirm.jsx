@@ -12,7 +12,7 @@ const ModalConfirm = ({show, setShow, handleConfirmOrder}) => {
         <>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Xác nhận thông tin</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="form-text">
